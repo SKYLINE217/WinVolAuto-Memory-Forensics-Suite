@@ -1,0 +1,23 @@
+END USER LICENSE AGREEMENT (EULA) for WinVolAuto
+
+IMPORTANT: PLEASE READ THIS LICENSE CAREFULLY BEFORE USING THIS SOFTWARE.
+
+1. LICENSE GRANT
+   This software is licensed, not sold. This EULA grants you the following rights:
+   - Usage: You may use this software for authorized security research, incident response, and malware analysis only.
+
+2. RESTRICTIONS
+   - You may not use this software for malicious purposes.
+   - You may not use this software to analyze systems or data you do not have explicit authorization to access.
+   - You may not reverse engineer, decompile, or disassemble the software.
+
+3. DISCLAIMER OF WARRANTY
+   This software is provided "AS IS" without warranty of any kind. The author disclaims all warranties, either express or implied, including the warranties of merchantability and fitness for a particular purpose.
+
+4. LIMITATION OF LIABILITY
+   In no event shall the author be liable for any damages whatsoever arising out of the use of or inability to use this software.
+
+5. COMPLIANCE WITH LAWS
+   You agree to comply with all applicable local and international laws regarding the use of this software.
+
+By installing or using this software, you agree to be bound by the terms of this EULA.

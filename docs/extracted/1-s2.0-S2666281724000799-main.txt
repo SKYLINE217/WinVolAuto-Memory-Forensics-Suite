@@ -1,0 +1,1398 @@
+Contents lists available at ScienceDirect 
+
+Forensic Science International: Digital Investigation 
+
+journal homepage: www.elsevier.com/locate/fsidi 
+
+DFRWS USA 2024 - Selected Papers from the 24th Annual Digital Forensics Research Conference USA 
+
+A step in a new direction: NVIDIA GPU kernel driver memory forensics 
+
+Christopher J. Bowen a, b, *, Andrew Case b,c, Ibrahim Baggili a, b, Golden G. Richard III a, b 
+a School of Electrical Engineering & Computer Science, Louisiana State University, USA 
+b Center for Computation and Technology, Louisiana State University, USA 
+c Volatility Foundation, USA   
+
+A R T I C L E  I N F O    
+
+A B S T R A C T    
+
+Keywords: 
+NVIDIA 
+GPU forensics 
+Memory forensics 
+NVOC 
+Linux 
+Volatility 
+GPU-Assisted malware 
+
+In the ever-expanding landscape of computation, graphics processing units have become one of the most essential 
+types of devices for personal and commercial needs. Nearly all modern computers have one or more dedicated 
+GPUs due to advancements in artificial intelligence, high-performance computing, 3D graphics rendering, and 
+the  growing  demand  for  enhanced  gaming  experiences.  As  the  GPU  industry  continues  to  grow,  forensic  in-
+vestigations will need to incorporate these devices, given that they have large amounts of VRAM, computing 
+power, and are used to process highly sensitive data. Past research has also shown that malware can hide its 
+payloads  within  these  devices  and  out  of  the  view  of  traditional  memory  forensics.  While  memory  forensics 
+research aims to address the critical threat of memory-only malware, no current work focuses on video memory 
+malware and the malicious use of the GPU. Our work investigates the largest GPU manufacturer, NVIDIA, by 
+examining the newly released open-source GPU kernel modules for the development of forensic tool creation. We 
+extend our impact by creating symbol mappings between open and closed-source NVIDIA software that enables 
+researchers to develop tools for both “flavors” of software. We specifically focus our research on artifacts found in 
+RAM, providing the foundational methods to detect and map NVIDIA Object Compiler Structures for forensic 
+investigations. As a part of our analysis and evaluation, we examined the similarities between open-and-closed 
+kernel  modules  by  collecting  structure  sizes  and  class  IDs  to  understand  the  similarities  and  differences.  A 
+standalone tool, NVSYMMAP, and Volatility plugins were created with this foundation to automate this process 
+and provide forensic investigators with knowledge involving processes that utilized the GPU.   
+
+1. Introduction 
+
+Graphics Processing Units (GPUs) are one of the most essential types 
+of computing technology in both personal and commercial computing, 
+experiencing rapid growth driven by advancements in artificial intelli-
+gence  (AI),  High  Performance  Computing  (HPC),  and  3D  graphics 
+rendering. Over the past decade, GPUs have become integral parts of 
+personal  computers.  With  this  development,  more  forensic  in-
+vestigations will involve one or more GPUs. 
+
+Currently,  the  GPU  market  is  dominated  by  three  primary  manu-
+facturers: NVIDIA,  AMD, and Intel. At the time of writing, NVIDIA is 
+currently  the  largest  manufacturer,  holding  84  %  of  the  GPU  market 
+(Peddie  2023).  In  2023,  NVIDIA’s  market  capitalization  passed  one 
+trillion for the first time, making it one of the five trillion-dollar USD 
+companies  in  the  technology  market  (Apple,  Microsoft,  Alphabet, 
+Amazon,  and  NVIDIA)  (Reuters  2023).  While  NVIDIA  is  one  of  the 
+world’s largest companies, there is little research involving the use of the 
+
+GPU  for  malicious  intentions  and  even  less  for  forensics  regarding  a 
+GPU. 
+
+As GPUs continue to become a commodity for customers, forensic 
+concerns arise surrounding the substantial computation power a GPU 
+can provide for specific tasks and the kernel level trust the operating 
+system  provides  to  the  device.  Advanced  malware/rootkits  can abuse 
+the GPU and even hide valuable evidence within Video Random-Access 
+Memory  (VRAM),  avoiding  Antivirus  (AV).  While  there  is  no  known 
+“wild”  malware that hides within the GPU, nation-state attacks could 
+utilize  the GPU to become undetectable. Currently, no one is  looking 
+into  this  possibility,  and  in  our  work,  we  aim  to  start  to  address this 
+threat. 
+
+Previous research has only scratched the surface of valuable infor-
+mation  that  can  be  found  in  the  GPU  ecosystem.  Our  work  aims  to 
+address this gap by conducting the first peer-reviewed analysis of NVI-
+DIA kernel modules on Linux-based systems. Additionally, we present 
+methods  to  identify  and  extract  NVIDIA  Object  Compiler  (NVOC) 
+
+* Corresponding author. 
+
+E-mail addresses: cbowe13@lsu.edu (C.J. Bowen), andrew@dfir.org (A. Case), ibaggili@lsu.edu (I. Baggili), golden@cct.lsu.edu (G.G. Richard).  
+
+https://doi.org/10.1016/j.fsidi.2024.301760    
+
+ForensicScienceInternational:DigitalInvestigation49(2024)301760Availableonline5July20242666-2817/©2024TheAuthor(s).PublishedbyElsevierLtdonbehalfofDFRWS.ThisisanopenaccessarticleundertheCCBY-NC-NDlicense(http://creativecommons.org/licenses/by-nc-nd/4.0/).C.J. Bowen et al.                                                                                                                                                                                                                                
+
+structures  for  both  open  and  closed-source  modules,  offering  symbol 
+mappings  between  drivers  to  allow  for  future  GPU  forensic tools  and 
+research. 
+
+Our contributions are as follows:  
+
+• We  present  the  first  peer-reviewed  analysis  of  NVIDIA’s  kernel 
+
+modules/drivers on Linux systems.  
+
+• We  provide  methods  to  identify  and  extract  NVOC  structures  for 
+
+both Open and Closed-source Modules. 
+
+• We provide mappings and memory snippets1 of NVOC Class Defini-
+tions structures between open and closed-source NVIDIA drivers to 
+allow for future memory forensic tools and works focused on GPU 
+Forensics.  
+
+• We  created  multiple  open-source  plugins2  for  Volatility  to  parse 
+
+important artifacts out of memory for an investigation.  
+
+• We created NVSYMMAP,3 a Python 3.0 tool, to automate the entire 
+process of mapping NVOC Class Definitions structures between new 
+Open and Closed Source Modules. 
+
+Our work aims to reveal how valuable artifacts can be found within a 
+system’s Random-Access Memory (RAM) for NVIDIA GPUs and provide 
+industry tools for both open and closed-source environments. 
+
+2. Motivations and goals 
+
+Until recently, NVIDIA’s code was primarily closed-source, making 
+the creation of forensic tools nearly impossible because of the enormous 
+amount of reverse engineering required to understand how the software 
+operates.  However,  in  May  2022,  NVIDIA  released  open-source  GPU 
+Kernel modules under dual GPL/MIT licenses that allow users to opt into 
+(Cherukuri et al., 2023). This change is a pivotal step toward enhancing 
+the utilization and security of NVIDIA GPUs on Linux. However, despite 
+this progress, a critical limiting factor still exists: most users will still 
+utilize closed-source drivers. 
+
+To address this limitation, our work aims to understand the inner- 
+workings of both kernel modules, how structures are laid out in mem-
+ory, and what type of memory to look in –  RAM or VRAM. If we can 
+parse  vital  information  to  determine  if  a  process  used  the  GPU  mali-
+ciously  and  what  it  was  trying  to  accomplish,  then  investigators  will 
+have a greater understanding of what occurred during an incident. 
+
+We know GPUs will commonly transfer information between RAM 
+and VRAM. By examining the drivers of the system’s GPU, we can begin 
+to  understand  how  memory  management  and  translation  occur  and 
+leverage this to find forensic evidence. We can examine NVIDIA’s kernel 
+module,  stored  in  RAM,  to  extract  the  necessary  system  information 
+regarding the GPU for an investigation. 
+
+While past research has focused on examining VRAM, we believe by 
+examining the contents of RAM, we can start to develop forensic tools to 
+detect  GPU-assisted  malware  and  standalone  GPU  malware.  Our 
+research  aims  to  provide  the  foundation  for  comprehensive  forensic 
+methods  and  tools  capable  of  extracting  artifacts  from  RAM  for  any 
+version of NVIDIA Linux drivers. 
+
+3. Background 
+
+This  section  provides  background  knowledge  for  the  rest  of  the 
+paper,  including  an  introduction  to  Linux  Kernel  Modules,  NVIDIA 
+Kernel Modules, and NVOC Structures. 
+
+1  https://github.com/LSUACL/GPU-Forensics/tree/main/memory-snippets.  
+2  https://github.com/LSUACL/GPU-Forensics/tree/main/plugins.  
+3  https://github.com/LSUACL/GPU-Forensics/tree/main/NVSYMMAP. 
+
+3.1. Linux kernel modules and Kallsyms 
+
+Linux  kernel  modules  are  executables  that  can  be  dynamically 
+loaded  and  unloaded  into  kernel  space  when  the  system  runs.  These 
+modules  can  extend  the  kernel’s  functionality  by  implementing  in-
+terfaces for devices as drivers. Each module serves a specific purpose and 
+can export symbols through Kallsyms. 
+
+Kallsyms,  the  Linux  kernel  symbol  table,  is  a  data  structure  that 
+contains information about code within kernel space, such as the address 
+of functions and structures in memory. Kallsyms displays the dynami-
+cally  loaded  address  of  each  symbol,  which  can  be  utilized  to  locate 
+essential  structures  in  the  kernel  memory  space  and  parse  associated 
+data. Kallsyms is exported to userspace via /proc/kallsyms. 
+
+3.2. NVIDIA kernel modules 
+
+NVIDIA currently provides two distinct “flavors” of kernel drivers for 
+Linux-based operating systems –  open source and closed source. Each 
+version of the drivers helps provide the kernel with an interface to access 
+and  utilize  the  GPU.  When  an  NVIDIA  driver  is  installed  on  a  Linux- 
+based system, four distinct kernel modules are loaded into kernel space:  
+
+• nvidia: The main NVIDIA Kernel module we investigate in this work.  
+• nvidia_modeset: The NVIDIA Kernel module that handles the mode 
+
+setting of the GPU.  
+
+• nvidia_drm:  The  NVIDIA  kernel  module  that  handles  the  Direct 
+
+Rendering Manager. 
+
+• nvidia_uvm: The NVIDIA kernel module that handles Unified Vir-
+
+tual Memory. 
+
+These modules implement interfaces provided by the Direct Rendering 
+Manager (DRM), drm_kms_helper, and Video kernel modules. They also 
+provide interfaces to userland processes for accessing the GPU. To list 
+these modules, users can run lsmod and grep for “nvidia”. In this work, 
+we  exclusively  examine  Nvidia’s  525  drivers;  however,  our  methods 
+extend to future versions of the drivers. 
+
+3.3. NVIDIA object compiler 
+
+NVIDIA’s kernel modules use NVOC for a large portion of their driver 
+code base. NVOC is a preprocessor that allows NVIDIA to add specific 
+metadata to the headers of structures to allow for lookups, feature toggle 
+flags, and specific chip behaviors. NVIDIA uses NVOC in both their open 
+and closed-source kernel modules for Linux and Windows drivers. NVOC 
+code generator is a fork of Clang 3.X and is currently a closed-source tool 
+used within NVIDIA (Tijanic 2022). NVOC follows the general structure 
+of C++, implementing a Run-Time Type Information (RTTI) structure 
+for each object. Within each NVOC_RTTI structure (Listing 3) is a pointer 
+to a Class Definition structure, which can be used to map symbols be-
+tween open and closed source modules. 
+
+In the open-source kernel modules, NVOC files are found in /src/ 
+nvidia/generated/. Files with the endings _nvoc.c and _nvoc.h were 
+pre-compiled using NVOC. These files contain important information for 
+creating  memory  forensics  tools  relating  to  GPUs  and  can  be  used  to 
+understand NVIDIA’s ecosystem. In Source Code Analysis and Method 
+Creation, we expand upon this background knowledge to explain how 
+NVOC is implemented and can be used to locate and map open-to-closed 
+source structures. 
+
+4. Methodology 
+
+This  section  describes  our  methodology  for  examining  NVIDIA’s 
+source  code  and  creating  forensic  tools.  We  expand  on  our  work  by 
+explaining our methods to locate and parse NVOC structures for both 
+open and closed-source Nvidia drivers. 
+
+Our methodology follows: 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017602C.J. Bowen et al.                                                                                                                                                                                                                                
+
+1.  Source Code Analysis  
+2.  Memory Acquisition  
+3.  Memory Analysis  
+4.  Method Creation 
+
+4.1. Source code analysis 
+
+NVIDIA’s open-source drivers can be downloaded from their GitHub 
+repository.4  We manually analyzed the structure of the source code to 
+understand and identify code patterns we could utilize to locate struc-
+tures in memory. After reviewing the overall architecture of the code-
+base,  we  determined  a  substantial  amount  of  the  software  could  be 
+covered by focusing on the OS-agnostic and auto-generated code. 
+
+A  significant  number  of  these  files  and  structures  utilized  NVOC. 
+NVOC  structures  follow  a  unique  layout  that  can  be  utilized  to  map 
+structures in memory and between each module. Each NVOC structure 
+has a unique CLASSID that can be used to map and identify data struc-
+tures. An example of a CLASSID declaration from the open-source code 
+
+Each NVOC_CLASS_DEF structure also has an associated NVOC_RTTI 
+structure that points to it (Listing 3). This pointer is the first member of 
+the RTTI structure (Listing 3 Line 2). These NVOC_RTTI structures are 
+also unique to each NVOC structure and can be used in mapping NVOC 
+structures. 
+
+Listing 3. NVOC_RTTI Definition Structure 
+
+In Method Creation, we explain how we use NVOC’s structure format 
+
+to map symbols and structures from open to closed-source modules. 
+
+Listing 4. Nvidia Symbols From Open and Closed Source Software  
+
+can be found in Listing 1. 
+
+4.2. Memory acquisition 
+
+Listing 1. Example of NVOC ClassID Declaration 
+
+Each of these CLASSIDs are held within a unique NVOC_CLASS_DEF 
+structure in the NVOC_CLASS_INFO member (Listing 6 Line 3). These 
+class  definition  structures  are  directly  exported  through  /proc/kall-
+syms, allowing the ability to locate them after a memory sample has 
+been collected. In these structures, important information, such as the 
+size of the structure, RTTI provider ID, and name (if the NV_PRINTF_-
+STRINGS_ALLOWED  is  set),  is  included.  With  each  class  definition 
+symbol mapped, we can use the method described in Reverse NVIDIA 
+Object Lookup to locate any NVOC structure in memory. 
+
+Listing 2. NVOC_CLASS Definition Structure 
+
+To properly assess NVIDIA’s GPUs memory footprint, we needed to 
+collect physical memory samples because GPUs are not easily virtualized 
+and, in most cases, are run on physical hardware. In future work, we aim 
+to explore NVIDIA’s Virtual GPU Software; however, in this work, all 
+memory  samples  acquired  were  with  Surge  Collect  Pro,5  a  physical 
+memory sample acquisition tool. 
+
+We created two testing environments that included the same NVIDIA 
+GPU and operating system. We then installed each flavor of the drivers 
+(open and closed) and verified they were in use. After the drivers were 
+loaded into memory, we took physical memory images of the systems so 
+we could inspect each driver for NVOC structures. A detailed apparatus 
+of devices and software for our research is displayed in Table 1. 
+
+4.3. Memory analysis 
+
+To  analyze  each  of  the  memory  samples,  we decided  to  use Vola-
+tility6 2.6 because it is open-source and widely available. The Volatility 
+Framework  is  a  collection  of  volatile  memory  tools  that  offer  in-
+vestigators insight into the current state of a machine at acquisition and 
+can be used to extract digital artifacts from volatile memory. 
+
+We primarily utilized the Linux volshell plugin to navigate memory 
+dumps  to  search  for  NVOC  structures.  We  determined  many  of  these 
+NVOC structures were in use for the open-source drivers and could be 
+found with their associated kallsym. We also determined that the closed- 
+source module followed the NVOC implementation when examining the 
+memory sample. With this information, we started to develop methods 
+to search and parse each NVOC structure for both modules. 
+
+4  https://github.com/NVIDIA/open-gpu-kernel-modules. 
+
+5  https://www.volexity.com/products-overview/surge/.  
+6  https://github.com/volatilityfoundation/volatility. 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017603C.J. Bowen et al.                                                                                                                                                                                                                                
+
+Table 1 
+Apparatus table depicting the hardware and software utilized throughout the experiment.  
+
+Hardware/Software 
+
+Use 
+
+Company 
+
+Software/Model Version 
+
+Volatility 
+Surge Collect Pro 
+Ubuntu 
+NVIDIA Open-Kernel Module 
+NVIDIA Closed-Kernel Module 
+HxD 
+VSCode 
+RTX 3080ti 
+
+4.4. Method creation 
+
+Memory Forensics Framework 
+Memory Acquisition Tool 
+Operating System 
+GPU Driver 
+GPU Driver 
+Hex Editor 
+Integrated Development Environment 
+GPU 
+
+Volatility Foundation 
+Volexity 
+Canonical 
+NVIDIA 
+NVIDIA 
+mh-nexus 
+Microsoft 
+MSI 
+
+2.6 
+23.03.28 
+22.04 LTS 
+525.125.06 
+525 
+2.5 
+1.86.0 
+n/a  
+
+We first explain our method of mapping symbols between open-to- 
+closed  source  NVIDIA  modules.  To  build  on  this,  we  explain  how, 
+once mappings have been created between each module’s symbols, we 
+can use a reverse pointer lookup method to find the addresses of NVOC 
+structures in kernel memory. After identifying the location in memory of 
+NVOC  structures,  we  explain  our  parsing  methodology.  With  this 
+methodology, other researchers can build forensic tools to parse artifacts 
+from memory regarding NVIDIA’s GPUs. We build on this foundation in 
+the Tool Creation section to create plugins for Volatility 2.6 that auto-
+mate  each  of  these  methods  and  a  standalone  tool,  NVSYMMAP,  for 
+automating the complete process of mapping modules. 
+
+4.4.1. Mapping open-to-closed source kernel modules symbols and objects 
+The first step of providing a proper memory forensics foundation for 
+NVIDIA GPU kernel modules is providing mappings that cover open and 
+closed-source software. We achieved this by creating links of symbols 
+between each module. Each of the module’s exported symbols can be 
+found in /proc/kallsyms. One major issue with mapping symbols be-
+tween  modules  is  vital  symbols  are  “scrubbed”  in  the  closed-source 
+module and can not be directly mapped by name. An example output 
+of each module kallsyms is shown in Listing 4. We can overcome this 
+issue by utilizing the following method. 
+
+We first compile a list of NVOC CLASSIDs from the open-source code. 
+Next,  we  locate  the  associated  open-source  symbol  and  examine  its 
+memory contents to confirm the CLASSID. Finally, we scan each closed 
+source  symbol  (related  to  the  Nvidia  kernel  module)  for  the  same 
+
+4.4.2. Recursive descent NVIDIA ClassID lookup 
+
+A second method was also created to map symbols for either module. 
+With the knowledge from Source Code Analysis, we understand that all 
+NVOC structure’s first member points to a NVOC_RTTI structure, and 
+NVOC_RTTI to NVOC_CLASS_DEF. With this we can probe each kallsym 
+and check if the first eight bytes are a valid pointer within the context of 
+the  kernel.  If  so,  we  follow  this  pointer  and  continue  checking  for 
+another pointer while keeping track of the depth. Once the first eight 
+bytes are not a valid pointer, we check to see if a valid CLASSID is found. 
+If so, then we check to see if the related closed-source module has the 
+same  symbol  (checking  for  depth  and  CLASSID).  One  result  of  this 
+method is the mapping between _nv022923rm (closed) and the g_pSys 
+(open), with a depth of three, which points to the OBJSYS CLASSID. This 
+method is shown in Fig. 2a. 
+
+4.4.3. Heuristically searching for NVIDIA ClassIDs 
+
+Finally, we created a heuristic method to search for undocumented 
+CLASSIDs and structures for the closed-source drivers. We probed each 
+kallsym and searched for the structure of an NVOC_CLASS_DEF. If the 
+structure was detected, the memory was examined and verified. Inter-
+estingly, we discovered by searching that some of the CLASSIDs declared 
+in  the  open-source  modules  that  do  not  have  associated  structures  in 
+memory or the source code are found in the closed-source modules. One 
+example  of  this  occurring  is  the  NVOC  structure  OBJGPULOG.  This 
+structure  is  found  in  the  closed-source  modules  with  the  associated 
+_nv002107rm kallsym and is initialized with a size of 496 bytes. 
+
+Listing 5. Example of NVOC Class Definition Kallsym Output  
+
+CLASSID. Once we find each symbol for open and closed source mod-
+ules, we then create a mapping. An example of the AccessCounterBuffer 
+NVOC structure’s class definition memory contents for both modules can 
+be found in Listing 5, and Fig. 1 displays an overview of the result of this 
+process. 
+
+With these mappings between open-to-closed source symbols, we can 
+now  develop  forensic  tools  that  work  for  both  kernel  modules.  After 
+mapping each symbol for NVOC_CLASS_DEF, we use a reverse lookup 
+method,  described  in  the  Reverse  NVIDIA  Object  Lookup  section,  to 
+locate  desired  structures.  Note  many  of  the  closed-source  scrubbed 
+symbols  are  not  structures  but  functions;  our  methods  focus  only  on 
+NVOC structures and their associated members. 
+
+4.4.4. Reverse NVIDIA object lookup 
+
+While each NVOC structure does not have an exported kallsym, we 
+can work backward from its associated NVOC_CLASS_DEF. Each struc-
+ture generated by NVOC follows the same memory layout (described in 
+the Source Code Analysis section), which can be used to locate it. 
+
+A  NVOC  structure’s  first  member  is  a  pointer  to  its  associated 
+NVOC_RTTI structure. Listing 6 shows an example of this. By utilizing 
+how NVIDIA’s NVOC objects are created, with each structure pointing to 
+a RTTI structure and each RTTI pointing to an NVOC_CLASS_DEF (where 
+each  Class  Definition  has  an  associated  symbol  in  kallsyms),  we  can 
+locate any NVOC structure in memory that we desire. 
+
+Listing 6. Example of NVOC Structure 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017604C.J. Bowen et al.                                                                                                                                                                                                                                
+
+5. Tool creation 
+
+In this section, we will discuss the plugins and tools we created to 
+automate  the  process  of  mapping  symbols  between  drivers  and  the 
+ability  to  locate  desired  structures  in  memory.  After  providing  these 
+foundational plugins, we extend our work into a forensic-specific plugin 
+to parse valuable evidence from a system. We also provide a standalone 
+tool, NVSYMAP, for automating the mapping process of each driver. 
+
+5.1. CheckNvidia 
+
+The CheckNvidia plugin runs a scan to print out if an NVIDIA kernel 
+module was in use. If an NVIDIA module is found, the plugin will print 
+out the information about the module. To obtain additional information 
+about the NVIDIA module, CheckNvidia will pull from two sources of 
+information – module_kset from the Linux kernel and pNVRM_ID from 
+the NVIDIA module. This information is then combined and displayed to 
+the user. 
+
+Fig. 1. Diagram of cross-mapped symbols.  
+
+5.2. NVOC_CLASS_DEF scan 
+
+We can use a reverse pointer lookup to map RTTI structs to NVOC 
+class definitions. After mapping each RTTI structure, we can continue 
+using reverse pointer lookup to map NVIDIA objects to RTTI structures. 
+This process is depicted in Fig. 2b and is automated in a volatility plugin 
+created as described in Tool Creation. 
+
+4.4.5. NVIDIA object parsing 
+
+After  identifying  where  these  structures  are  in  memory  and  their 
+associated sizes, we needed a way of adequately extracting the data and 
+members of the structures. NVIDIA offers an option to build their open 
+kernel modules in debug mode by enabling the DEBUG flag – adding the 
+gcc flag “-gsplit-dwarf”  to the compilation. This flag will separate the 
+information of the executable into two files,*.o (“OBJECT”) and*.dwo 
+(“DWARF  object”).  After  investigating  each  of  the  files  created  on 
+compilation,  we  identified  a  way  of  extracting  a  structure’s  memory 
+footprint  from  the  .dwo  files  with  the  debug  information.  While  this 
+method  allows  us  to  generate  artificial  memory  structures,  such  as 
+vtypes for Volatility 2, we are unable to use this method for the closed- 
+source modules due to the absence of *.dwo files provided. 
+
+For  closed-source  modules,  we  utilize  the  NVOC_CLASS_INFO 
+structure,  which, after investigation, appears to be the  same between 
+open and closed modules to identify the size of the desired structure. 
+After  parsing  the  structure  from  memory,  we  make  use  of  the  open- 
+source  definition  to  map  the  closed-source  structure.  In  most  cases, 
+this  method  can  be  used  to  locate  the  desired  data;  however,  each 
+structure will range in difficulty due to no direct references to how the 
+structure’s members are laid out. 
+
+Note  the  current  standard  of  parsing  debugging  information  for 
+Volatility  vtypes/symbols  is  using  dwarf2json7;  however,  this  tool 
+currently does not support .dwo files; thus, we could not utilize it. 
+
+7  https://github.com/volatilityfoundation/dwarf2json. 
+
+The  NVOC_CLASS_DEF  Scan  plugin  scans  the  kernel  pages  that 
+contain modules. It looks for NVOC_CLASS_DEF structures in memory 
+using  two  types  of  scanning.  The  first  scanning  type  will  utilize  the 
+“known”  list of NVOC CLASSIDs. The plugin will also iteratively scan 
+memory using the sliding window technique (scanning byte by byte). 
+Once a word matches one of the list’s entries, the plugin will validate the 
+structure  using a  heuristic  and  add  the  location of  the  found  NVOC_-
+CLASS_DEF structure to  display. The second technique  utilizes a  heu-
+ristic  mechanism  to  find  NVOC_CLASS_DEF  structures  by  using  the 
+validating mechanism that method one implements. The technique will 
+scan all NVIDIA-specific symbols in kallsyms. 
+
+5.3. Reverse structure lookup and acquisition 
+
+The reverse structure lookup plugin will locate the NVOC Structure 
+in  memory  by  working  backward  with  the  Reverse  Ascent  Lookup 
+method. The plugin begins searching for the symbol associated with the 
+CLASSID  provided  by  the  user.  Then,  the  kernel  will  be  scanned  to 
+search for a pointer directed at the NVOC_CLASS_DEF. If the NVOC_RTTI 
+is found, then the plugin will again scan memory, looking for a pointer 
+directed at the NVOC_RTTI structure. Fig. 3 displays an example output 
+of  this  plugin  when  searching  of  the  structure  associated  with  the 
+OBJGPU class name with the CLASSID of 0x7ef3cb. Note that two RTTI 
+structures  were  found;  this  is  because  the  RsResourcelist  symbol  also 
+held a pointer to the NVOC_CLASS_DEF of OBJGPU. For acquiring the 
+memory associated with the structure, the plugin will use the address of 
+the  structure  found  and  the  size  of  the  structure  from  the 
+NVOC_CLASS_DEF. 
+
+5.4. GPU accounting 
+
+NVIDIA  provides  the  ability  to  track  the  usage  of  resources 
+throughout the lifespan of an individual process via the GPU Accounting 
+capability. When enabling this feature, users can manage and monitor 
+the usage of their GPU via NVIDIA Management Library (NVLM) and 
+nvidia-smi.  The  GpuAccounting  structure  in  /src/nvidia/generated/ 
+g_gpu_acct_nvoc.h holds this information.  The NVOC structure holds 
+essential information for a forensic investigation, such as start time, end 
+time, live processes, dead processes, Process identifier (PID), and much 
+more. By parsing this structure from memory, we can account for the 
+history of the processes run on the GPU and potentially identify mali-
+cious processes. 
+
+While this is straightforward for collecting forensic evidence, there 
+are some limitations to this method. The first limitation of this method is 
+there is no current way to enable GPU Accounting on the open-source 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017605C.J. Bowen et al.                                                                                                                                                                                                                                
+
+Fig. 2. Methods to map and extract NVOC structures.  
+
+Fig. 3. Example of the reverse lookup plugin with the NVOC structure OBJGPU  
+
+5.5. NVSYMMAP 
+
+NVSYMMAP,8 NV Symbol Mapper, is an open-source command line 
+tool  written  in  Python3,  created  to  automate  the  process  of  mapping 
+symbols  within  and  between  NVIDIA  kernel  modules  on  Linux  with 
+memory forensics. NVSYMMAP was developed to map new releases of 
+NVIDIA drivers with ease. 
+
+Fig. 4 displays the workflow of the tool for mapping open-to-closed 
+source  symbols.  First,  a  user  will  create  two  environments  with  each 
+open and closed driver they desire to map (Fig. 4a). Next, the user will 
+acquire memory and /proc/kallsyms from each system (Fig. 4b). These 
+files are then passed into  NVSYMMAP with the associated Volatility2 
+profiles.  Once  NVSYMMAP  has  the  proper  information,  it  will  create 
+temporary files with commands (Fig. 4c) to pass into each instance of 
+Volatility  running  the  Linux_volshell  plugin  (Fig.  4d).  The  commands 
+generated by NVSYMMAP will inspect each NVIDIA-related symbol and 
+search for NVOC CLASSIDs in memory. This information is then passed 
+back  into  NVSYMMAP  and  parsed  to  create  mappings  between  each 
+driver (Fig. 4e). 
+
+6. Evaluation 
+
+This section evaluates our methods for identifying NVOC_CLASS_DEF 
+structures within NVIDIA kernel drivers with NVSYMMAP. We analyze 
+the  effectiveness  and  correctness  of  our  tool  by  utilizing  a  manually 
+created ground truth. 
+
+6.1. Identification of NVOC_CLASS_DEF structures 
+
+We first manually examined the open-source NVIDIA kallsyms that 
+relate  to  each  NVOC_CLASS_DEF.  Each  NVOC_CLASS_DEF  has  an 
+exported kallsym starting with “__nvoc_class_def_.” We created a list of 
+these kallsyms, and manually verified the associated NVOC CLASSIDs 
+(from the source code) by examining each symbol’s memory content – 
+resulting in 171 total CLASSIDs/structures for our ground truth. We then 
+used NVSYMMAP to verify our manually created data with the curated 
+__nvoc_class_def_list.  After  confirming  our  ground  truth,  we  “blindly” 
+searched  all  of  the  kallsym  (related  to  NVIDIA)  for  the  open-source 
+
+8  https://github.com/LSUACL/GPU-Forensics/tree/main/NVSYMMAP. 
+
+Fig. 4. Workflow of NVSYMMAP  
+
+modules. The second limitation is that GPU Accounting is not enabled by 
+default  for  the  closed-source  modules.  Users  must  enable  GPU  Ac-
+counting with NVIDIA’s nvidia-smi tool via the command line using the 
+following command: 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017606C.J. Bowen et al.                                                                                                                                                                                                                                
+
+structures. The closed-source drivers utilize 330 total structures, and the 
+open-source drivers utilize only 171 structures. 
+
+Interestingly,  when  examining  and  mapping  CLASSIDs  from  the 
+open-source  code  to  the  closed-source  code,  we  recognized  that  the 
+NVOC  class  definition  structures  are  scrubbed  alphabetically  by  class 
+name (ignoring capitalization) where they iterate from _nv001924rm to 
+_nv002253rm (AccessCounterBuffer-ZbcApi). With this knowledge, re-
+searchers  can  potentially  infer  the  undocumented  class  names  and 
+which  NVOC  structures  are  specific  to  the  closed-source  drivers.  One 
+example of narrowing down a symbol’s class name is _nv001979rm and 
+_nv001981rm,  where  the  CLASSIDs  are  GpuManagementApi  and 
+GpuResource,  resulting  in  _nv001979rm’s  CLASSID  name  falling  be-
+tween GpuMa-GpuRe. 
+
+Additionally, we examined the sizes associated with the documented 
+open-source  structures  versus  the  closed-source  structures.  We  sepa-
+rated each group arbitrarily into three groups: exact (for the same size), 
+small (for less than 100 bytes in difference), and large (for greater than 
+100 bytes in difference). Fig. 6b shows the results; most notable from the 
+data is that 59 of the 171 structures tested are the exact same size in both 
+modules. In Appendix, we display a partial listing of the obtained data, 
+and the full results can be found on our github. 
+
+8. Related work 
+
+Most of the research on GPU forensics was completed in 2015, and 
+little work has been compiled since then. We briefly describe the related 
+work in GPU-Assisted Malware, GPU Forensics, and Memory Forensics. 
+
+Fig. 5. Evaluation of NVSYMSMAP  
+
+modules,  amounting  to  14447  total  symbols,  to  find  each  of  the 
+__nvoc_class_def_kallsyms. While we cannot create ground truth for the 
+closed-source modules, we decided to run NVSYMAP with the generated 
+list of CLASSIDs to compare the results with the open-source. 
+
+6.2. Results 
+
+8.1. GPU-assisted malware 
+
+Fig. 5 shows  the results  of our evaluation.  The graph  displays the 
+total number of NVOC Class Definitions found for each test. Our ground 
+truth is shown as “known” with a total of 171 structures. When testing 
+the list blindly on the open kernel modules, NVSYMSMAP was able to 
+find each of the known class definitions with 19 additional false positive 
+symbols. Each of these 19 false positives was associated with a parent list 
+structure  in  relation  to  the  CLASSID.  When  running  the  test  on  the 
+closed-source module, we detected 193 total symbols in relation to the 
+CLASSID list. 
+
+7. Experimentation 
+
+This section describes our approach to experimenting with each open 
+and closed-source NVIDIA driver. We aim to evaluate the drivers’  dif-
+ferences and similarities by examining each NVOC structure. We also 
+want  to  explore  undocumented  NVOC  structures  and  their  associated 
+sizes  and  CLASSIDs.  While  this  experiment  only  examined  the  525 
+modules, our approach can be applied to newer versions of the drivers. 
+
+7.1. Approach 
+
+For our experimentation, we used NVSYMMAP. We created two new 
+environments  with  each  open  and  closed  source  525  drivers  and 
+extracted  the  necessary  information  to  parse  each  NVOC  structure’s 
+class definition. In our testing, we searched for undocumented structures 
+not found in the open-source code. We also examined the 171 known 
+structures that were in use for the open  modules and compared their 
+sizes to the associated closed-source structures. 
+
+7.2. Findings 
+
+We  found  a  significant  amount  of  additional  information  about 
+NVOC  structures  could  be  obtained  by  examining  the  closed-source 
+NVIDIA  drivers.  Fig.  6a  depicts  the  amount  of  NVOC  structures  uti-
+lized per version. In the open-source code, we were able to document 
+263 structures, and in the closed source, we identified 67 undocumented 
+
+GPU-Assisted  malware  utilizes  the  computational  power  and 
+elevated  trust  of  the  GPU  to  perform  specific  tasks  such  as  packing, 
+unpacking,  Direct  Memory  Access  (DMA),  and  Crypto  Mining.  At  the 
+time of  writing, there  is no  known “wild”  GPU-assisted malware  that 
+tries to hide in VRAM to avoid AV. However, a post on a hacker forum 
+offered a Proof of concept (POC) malware that utilized the GPU memory 
+buffer to store malicious code to evade AV RAM scanning (Ilascu 2021). 
+In addition  to this,  academic researchers  created malware/rootkits to 
+show  how  it  could  leverage  hiding  valuable  information  within  the 
+VRAM of a GPU (Reynaud 2008; Vasiliadis et al., 2015; Ladakis et al., 
+2013). One example of GPU-Assisted rootkit is JellyFish.9 JellyFish was 
+a POC academic malware that ran on Windows, Linux, and MAC in 2015 
+(Bongiorni  2015).  Interestingly,  JellyFish  utilized  OpenCl  to  interact 
+with either NVIDIA or AMD products for “snooping” via DMA. 
+
+8.2. GPU forensics 
+
+GPU forensics is the process of investigating and analyzing the ma-
+licious use of the GPU. Balzarotti et al. (2015) examined the many ap-
+proaches  an  attacker  may  take  to  misuse  a  GPU  and  its  impact  on 
+memory forensics. To address these threats, a framework was suggested 
+for analyzing GPU-executed malware by Apostol et al. (2021); however, 
+the  approach  focused  on  high-level  APIs  that  could  be  avoided  by 
+advanced  attacks,  whereas  our  approach  focuses  on  investigating  the 
+drivers of the GPU for forensic evidence. 
+
+8.3. Memory forensics 
+
+Memory forensics is the analysis of a system’s volatile memory. Case 
+& Richard III (2017) provided a critical analysis of the current state of 
+memory  forensics  and  an  overview  of  the  issues  that  need  to  be 
+addressed. We believe addressing new architectures is one major core 
+involving  Apple  Silicon, 
+issue  and  should  be  studied.  Works 
+
+9  https://github.com/nwork/jellyfish. 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017607C.J. Bowen et al.                                                                                                                                                                                                                                
+
+Fig. 6. Result of analysis of structures and sizes of NVOC.  
+
+Programmable  Logic  Controllers  (PLC),  and  NVIDIA  GPUs  extend 
+memory forensic’s  reach and address advanced attacks (Mettig et  al., 
+2023, Awad et al., 2023). 
+
+able  to  map  the  pages  a  process  utilizes  in  the  GPU  with  the  NVOC 
+structures that control address translation and memory allocation. 
+
+9. Discussion and future work 
+
+Our work provides a foundation for future research involving GPU 
+forensics.  We  created  the  first  memory  forensic  tools  for  GPUs  that 
+provide forensic investigators with valuable insight into which processes 
+accessed the GPU for NVIDIA drivers. We also presented the first anal-
+ysis of NVIDIA open-source kernel modules and mapping to associate 
+closed-source modules. Comparing our work with previous research, we 
+contributed significant  improvements to the current state of forensics 
+involving GPUs, specifically NVIDIA products. 
+
+As  described  in  Section  4,  we  created  methods  to  accurately  and 
+reliably locate NVOC structures in memory for both open and closed- 
+source  NVIDIA  kernel  modules.  These  methods  provided  will  help 
+make future work possible surrounding GPU forensics. 
+
+In  addition,  we  provide  a  comprehensive  list  of  mappings  for 
+NVOC_CLASS_DEF symbols between kernel modules to extend the reach 
+of future work and make new tool creation more accessible. With this 
+new foundation of how NVIDIA stores information related to their GPUs 
+on  Linux-based systems, forensic  investigators can start to  detect and 
+analyze malicious software that utilizes the GPU. 
+
+In future work, we aim to extend the amount of forensic evidence 
+that can be found by an investigator. Notably, we want to investigate 
+methods of obtaining physical VRAM images. In previous research, tools 
+were created with OPENCL and CUDA to obtain a VRAM image; how-
+ever, these tools operate from user-land, causing significant changes to 
+RAM and potentially VRAM due to context switches required to map the 
+memory.  One  patch  was  developed  by  NVIDIA  for  the  DFRWS  2015 
+memory  forensics  challenge10  that  obtained  a  physical  VRAM  image 
+from kernel space; however, this was specifically for the 343.13 drivers. 
+Once we create tools for obtaining VRAM, we believe that we will be 
+
+10. Conclusions 
+
+GPU memory forensics is possible and should be studied. Within our 
+work, we showed that NVIDIA has opened up parts of its software that 
+researchers  can  utilize  to  create  tools  and  methods  to  extract  vital 
+forensic information. It is possible to examine both sets of modules, open 
+and closed, and begin to understand the inner workings of how a GPU 
+operates. 
+
+Malicious cyber attacks will continue to advance over time, so we 
+need  to  keep  improving  our  defensive  tools.  We  need  to  address  the 
+threat of malware hiding information within VRAM, and we can only do 
+that with a physical memory image of VRAM and RAM. Our approach of 
+starting  in  RAM  and  working  towards  VRAM  is  the  correct  way  of 
+developing tools, and we believe that it is the solution to solving this 
+blind spot in the forensics realm. With the methods and mappings we 
+provided, researchers can begin to extend the view of memory forensics 
+into the GPU environment. Our work has resulted in a new foundation 
+for  this  area,  and  we  are  committed  to  building  on  it  to  combat  the 
+evolving landscape of cyber threats. 
+
+Acknowledgments 
+
+We  want  to  thank  our  reviewers  for  their  helpful  comments.  We 
+would  also  like to  thank Brennen Calato  and Kyle McCleary  for their 
+time  reviewing  our  paper  and  offering  suggestions.  We  also  want  to 
+thank Louisiana State University for funding equipment and software. 
+This material is based upon work supported by the National Science 
+Foundation under Grant Number 1946626. Any opinions, findings, and 
+conclusions or recommendations expressed in this material are those of 
+the author(s) and do not necessarily reflect the views of the National 
+Science Foundation.  
+
+10  https://github.com/dfrws/dfrws2015-challenge. 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017608C.J. Bowen et al.                                                                                                                                                                                                                                
+
+Appendix  
+
+Class Name 
+
+Class ID 
+
+Open-Source Kallsym 
+
+Open-Size 
+
+Closed-Source Kallsym 
+
+Closed-Size 
+
+Difference 
+
+AccessCounterBuffer 
+BinaryApi 
+BinaryApiPrivileged 
+ChannelDescendant 
+ComputeInstanceSubscription 
+ConsoleMemory 
+ContextDma 
+DebugBufferApi 
+DeferredApiObject 
+Device 
+DiagApi 
+DispCapabilities 
+DispChannel 
+DispChannelDma 
+DispChannelPio 
+DispCommon 
+DisplayApi 
+DisplayInstanceMemory 
+DispObject 
+DispSfUser 
+DispSwObj 
+DispSwObject 
+Event 
+EventBuffer 
+Fabric 
+FABRIC_VASPACE 
+FlaMemory 
+FmSessionApi 
+GenericEngineApi 
+GenericKernelFalcon 
+GpuAccounting 
+GpuDb 
+GPUInstanceSubscription 
+GpuManagementApi 
+GpuResource 
+GpuUserSharedData 
+GSyncApi 
+Hdacodec 
+Heap 
+I2cApi 
+INotifier 
+Intr 
+IntrService 
+IoAperture 
+KernelBif 
+KernelBus 
+KernelCcu 
+KernelCcuApi 
+KernelCE 
+KernelCeContext 
+KernelChannel 
+KernelChannelGroup 
+KernelChannelGroupApi 
+KernelCtxShare 
+KernelCtxShareApi 
+KernelDisplay 
+KernelFalcon 
+KernelFifo 
+KernelFsp 
+KernelGmmu 
+KernelGraphics 
+KernelGraphicsContext 
+KernelGraphicsContextShared 
+KernelGraphicsManager 
+KernelGraphicsObject 
+KernelGsp 
+KernelHead 
+KernelHostVgpuDeviceApi 
+KernelIoctrl 
+
+0x1f0074 
+0xb7a47c 
+0x1c0579 
+0x43d7c4 
+0xd1f238 
+0xaac69e 
+0x88441b 
+0x5e7a1b 
+0x8ea933 
+0xe0ac20 
+0xaa3066 
+0x99db3e 
+0xbd2ff3 
+0xfe3d2e 
+0x10dec3 
+0x41f4f2 
+0xe9980c 
+0x8223e2 
+0x999839 
+0xba7439 
+0x6aa5e2 
+0x99ad6d 
+0xa4ecfc 
+0x63502b 
+0x0ac791 
+0x8c8f3d 
+0xe61ee1 
+0xdfbd08 
+0x4bc329 
+0xabcf08 
+0x0f1350 
+0xcdd250 
+0x91fde7 
+0x376305 
+0x5d5d9f 
+0x5e7d1f 
+0x214628 
+0xf59a20 
+0x556e9a 
+0xceb8f6 
+0xf8f965 
+0xc06e44 
+0x2271cc 
+0x40549c 
+0xdbe523 
+0xd2ac57 
+0x5d5b68 
+0x3abed3 
+0x242aca 
+0x2d0ee9 
+0x5d8d70 
+0xec6de1 
+0x2b5b80 
+0x5ae2fe 
+0x1f9af1 
+0x55952e 
+0xb6b1af 
+0xf3e155 
+0x87fb96 
+0x29362f 
+0xea3fa9 
+0x7ead09 
+0xe7abeb 
+0xd22179 
+0x097648 
+0x311d4e 
+0x0145e6 
+0xb12d7d 
+0x880c7d 
+
+__nvoc_class_def_AccessCounterBuffer 
+__nvoc_class_def_BinaryApi 
+__nvoc_class_def_BinaryApiPrivileged 
+__nvoc_class_def_ChannelDescendant 
+__nvoc_class_def_ComputeInstanceSubscription 
+__nvoc_class_def_ConsoleMemory 
+__nvoc_class_def_ContextDma 
+__nvoc_class_def_DebugBufferApi 
+__nvoc_class_def_DeferredApiObject 
+__nvoc_class_def_Device 
+__nvoc_class_def_DiagApi 
+__nvoc_class_def_DispCapabilities 
+__nvoc_class_def_DispChannel 
+__nvoc_class_def_DispChannelDma 
+__nvoc_class_def_DispChannelPio 
+__nvoc_class_def_DispCommon 
+__nvoc_class_def_DisplayApi 
+__nvoc_class_def_DisplayInstanceMemory 
+__nvoc_class_def_DispObject 
+__nvoc_class_def_DispSfUser 
+__nvoc_class_def_DispSwObj 
+__nvoc_class_def_DispSwObject 
+__nvoc_class_def_Event 
+__nvoc_class_def_EventBuffer 
+__nvoc_class_def_Fabric 
+__nvoc_class_def_FABRIC_VASPACE 
+__nvoc_class_def_FlaMemory 
+__nvoc_class_def_FmSessionApi 
+__nvoc_class_def_GenericEngineApi 
+__nvoc_class_def_GenericKernelFalcon 
+__nvoc_class_def_GpuAccounting 
+__nvoc_class_def_GpuDb 
+__nvoc_class_def_GPUInstanceSubscription 
+__nvoc_class_def_GpuManagementApi 
+__nvoc_class_def_GpuResource 
+__nvoc_class_def_GpuUserSharedData 
+__nvoc_class_def_GSyncApi 
+__nvoc_class_def_Hdacodec 
+__nvoc_class_def_Heap 
+__nvoc_class_def_I2cApi 
+__nvoc_class_def_Inotifier 
+__nvoc_class_def_Intr 
+__nvoc_class_def_IntrService 
+__nvoc_class_def_IoAperture 
+__nvoc_class_def_KernelBif 
+__nvoc_class_def_KernelBus 
+__nvoc_class_def_KernelCcu 
+__nvoc_class_def_KernelCcuApi 
+__nvoc_class_def_KernelCE 
+__nvoc_class_def_KernelCeContext 
+__nvoc_class_def_KernelChannel 
+__nvoc_class_def_KernelChannelGroup 
+__nvoc_class_def_KernelChannelGroupApi 
+__nvoc_class_def_KernelCtxShare 
+__nvoc_class_def_KernelCtxShareApi 
+__nvoc_class_def_KernelDisplay 
+__nvoc_class_def_KernelFalcon 
+__nvoc_class_def_KernelFifo 
+__nvoc_class_def_KernelFsp 
+__nvoc_class_def_KernelGmmu 
+__nvoc_class_def_KernelGraphics 
+__nvoc_class_def_KernelGraphicsContext 
+__nvoc_class_def_KernelGraphicsContextShared 
+__nvoc_class_def_KernelGraphicsManager 
+__nvoc_class_def_KernelGraphicsObject 
+__nvoc_class_def_KernelGsp 
+__nvoc_class_def_KernelHead 
+__nvoc_class_def_KernelHostVgpuDeviceApi 
+__nvoc_class_def_KernelIoctrl 
+
+1288 
+1204 
+1288 
+1256 
+1048 
+1312 
+1256 
+1032 
+1632 
+1608 
+1320 
+1032 
+1256 
+1576 
+1576 
+2232 
+984 
+200 
+1504 
+1032 
+1296 
+1824 
+720 
+1000 
+144 
+696 
+1336 
+904 
+1040 
+312 
+127560 
+128 
+1104 
+704 
+768 
+1024 
+1208 
+1024 
+1560 
+1064 
+56 
+5344 
+48 
+264 
+816 
+30064 
+824 
+1056 
+1080 
+1592 
+2056 
+456 
+1192 
+184 
+1064 
+912 
+136 
+1552 
+880 
+24544 
+1592 
+1064 
+1600 
+1216 
+1656 
+79048 
+152 
+1328 
+632 
+
+_nv001924rm 
+_nv001927rm 
+_nv001928rm 
+_nv001932rm 
+_nv001935rm 
+_nv001938rm 
+_nv001939rm 
+_nv001940rm 
+_nv001941rm 
+_nv001942rm 
+_nv001943rm 
+_nv001944rm 
+_nv001945rm 
+_nv001946rm 
+_nv001947rm 
+_nv001948rm 
+_nv001954rm 
+_nv001955rm 
+_nv001949rm 
+_nv001951rm 
+_nv001952rm 
+_nv001953rm 
+_nv001958rm 
+_nv001959rm 
+_nv001963rm 
+_nv001961rm 
+_nv001968rm 
+_nv001969rm 
+_nv001974rm 
+_nv001975rm 
+_nv001977rm 
+_nv001978rm 
+_nv001972rm 
+_nv001979rm 
+_nv001981rm 
+_nv001982rm 
+_nv001973rm 
+_nv001991rm 
+_nv001992rm 
+_nv001998rm 
+_nv001999rm 
+_nv002006rm 
+_nv002007rm 
+_nv002008rm 
+_nv002010rm 
+_nv002011rm 
+_nv002013rm 
+_nv002014rm 
+_nv002012rm 
+_nv002015rm 
+_nv002016rm 
+_nv002017rm 
+_nv002018rm 
+_nv002019rm 
+_nv002020rm 
+_nv002021rm 
+_nv002022rm 
+_nv002023rm 
+_nv002024rm 
+_nv002025rm 
+_nv002026rm 
+_nv002027rm 
+_nv002028rm 
+_nv002029rm 
+_nv002030rm 
+_nv002031rm 
+_nv002032rm 
+_nv002033rm 
+_nv002035rm 
+
+1288 
+1072 
+1360 
+1272 
+1048 
+1320 
+1256 
+1032 
+1648 
+1856 
+1352 
+1032 
+1256 
+1576 
+1576 
+3056 
+992 
+208 
+1512 
+1032 
+1304 
+1804 
+720 
+1000 
+136 
+696 
+1344 
+904 
+1416 
+400 
+93768 
+120 
+1104 
+704 
+768 
+1024 
+1208 
+1040 
+1560 
+1064 
+56 
+6160 
+48 
+264 
+752 
+28832 
+720 
+1056 
+1056 
+1608 
+2144 
+504 
+1192 
+192 
+1064 
+848 
+224 
+1664 
+776 
+24624 
+1544 
+1144 
+160 
+1112 
+1704 
+79144 
+192 
+1328 
+528 
+
+0 
+132 
+72 
+16 
+0 
+8 
+0 
+0 
+16 
+248 
+32 
+0 
+0 
+0 
+0 
+824 
+8 
+8 
+8 
+0 
+8 
+20 
+0 
+0 
+8 
+0 
+8 
+0 
+376 
+88 
+33792 
+8 
+0 
+0 
+0 
+0 
+0 
+16 
+0 
+0 
+0 
+816 
+0 
+0 
+64 
+1232 
+104 
+0 
+24 
+16 
+88 
+48 
+0 
+8 
+0 
+64 
+88 
+112 
+104 
+80 
+48 
+80 
+1440 
+104 
+48 
+96 
+40 
+0 
+104  
+
+ForensicScienceInternational:DigitalInvestigation49(2024)3017609C.J. Bowen et al.                                                                                                                                                                                                                                
+
+References 
+
+Apostol, T.-P., Velea, R., Deaconescu, R., 2021. A framework for analyzing gpu-executed 
+malware. In: 2021 23rd International Conference on Control Systems and Computer 
+Science (CSCS). ’, IEEE, pp. 165–171. 
+
+Awad, R.A., Rais, M.H., Rogers, M., Ahmed, I., Paquit, V., 2023. Towards generic 
+
+memory forensic framework for programmable logic controllers. Forensic Sci. Int.: 
+Digit. Invest. 44, 301513. 
+
+Balzarotti, D., Di Pietro, R., Villani, A., 2015. The impact of gpu-assisted malware on 
+
+memory forensics: a case study. Digit. Invest. 14, S16–S24. 
+
+Bongiorni, L., 2015. Lucabongiorni/jellyfish: gpu rootkit poc by team jellyfish. https:// 
+
+github.com/LucaBongiorni/jellyfish. 
+
+Case, A., Richard III, G.G., 2017. Memory forensics: the path forward. Digit. Invest. 20, 
+
+23–33. 
+
+Cherukuri, R., Baskaran, S., Ritger, A., Oh, F., Swoboda, D., 2023. Nvidia releases open- 
+source gpu kernel modules. https://developer.nvidia.com/blog/nvidia-releases-ope 
+n-source-gpu-kernel-modules/. 
+
+Ilascu, I., 2021. Cybercriminal sells tool to hide malware in amd, nvidia gpus. https:// 
+www.bleepingcomputer.com/news/security/cybercriminal-sells-tool-to-hide- 
+malware-in-amd-nvidia-gpus/. 
+
+Ladakis, E., Koromilas, L., Vasiliadis, G., Polychronakis, M., Ioannidis, S., 2013. You can 
+type, but you can’t hide: a stealthy gpu-based keylogger. In: Proceedings of the 6th 
+European Workshop on System Security (EuroSec)’. Citeseer. 
+
+Mettig, R., Glass, C., Case, A., Richard III, G.G., 2023. Assessing the threat of rosetta 2 on 
+
+apple silicon devices. Forensic Sci. Int.: Digit. Invest. 46, 301618. 
+
+Peddie, J., 2023. The graphics add-in board market continued its correction in q1 2023. 
+https://www.jonpeddie.com/news/the-graphics-add-in-board-market-continued-its- 
+correction-in-q1-2023/. 
+
+Reuters, 2023. Factbox: how megacap stocks fared after hitting $1 trillion in market cap. 
+https://www.reuters.com/markets/us/how-megacap-stocks-fared-after-hitting-1-tri 
+llion-market-cap-2023-05-30/. 
+
+Reynaud, D., 2008. Gpu Powered Malware. 
+Tijanic, M., 2022. Confusion about some file name formats ⋅ issue #100 ⋅ nvidia/open- 
+gpu-kernel-modules. https://github.com/NVIDIA/open-gpu-kernel-modules/i 
+ssues/100. 
+
+Vasiliadis, G., Polychronakis, M., Ioannidis, S., 2015. Gpu-assisted malware. Int. J. Inf. 
+
+Secur. 14, 289–297. 
+
+ForensicScienceInternational:DigitalInvestigation49(2024)30176010

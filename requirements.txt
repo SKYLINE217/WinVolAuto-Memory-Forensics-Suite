@@ -1,0 +1,8 @@
+PyQt6
+volatility3
+pefile
+requests
+reportlab
+matplotlib
+cryptography
+pdfminer.six

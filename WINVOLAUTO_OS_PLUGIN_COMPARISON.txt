@@ -1,0 +1,85 @@
+WinVolAuto – OS Plugin Comparison and Missing Coverage (Actionable)
+
+Overview
+- This document compares current plugin coverage across Windows, Linux, and macOS in WinVolAuto and lists missing categories you should include via Volatility 3 plugins (or their OS‑specific equivalents discovered at runtime).
+- Basis: Current workflow in UI and engine (Windows defaults in main workflow; Linux/mac minimal defaults in Dashboard).
+
+Windows
+- Present (wired by default)
+  - Process enumeration: pslist
+  - Hidden process detection: psscan
+  - Network artifacts: netscan
+  - Code injection detection: malfind
+  - Modules/handles: dlllist, handles
+  - Services/callbacks: svcscan, callbacks
+  - Dump/extract for VT: dumpfiles
+  - Optional: VadYaraScan when enabled
+- Missing (recommended to include)
+  - Command lines: cmdline (use by default; risk already ingests it)
+  - Parent‑child tree: pstree (for hierarchy and better triage)
+  - Kernel drivers/modules and hooks: drivers/modules scans, SSDT/IDT/inline hook checks
+  - Registry/persistence artifacts: autoruns‑like coverage (Run keys, Scheduled Tasks, WMI subscriptions)
+  - Signature trust checks: PE signature validation for DLLs/drivers (pair with dump analysis)
+  - Memory maps: per‑process VAD/mappings summary for injection heuristics
+  - Timeline correlation: unified event view (process/net/injection/persistence)
+
+Linux
+- Present (Dashboard defaults)
+  - Process enumeration: pslist
+  - Shell history: bash
+  - Syscall integrity: check_syscall
+  - ELF enumeration: elfs
+- Missing (recommended to include)
+  - Hidden processes: psscan‑equivalent for Linux memory images
+  - Network artifacts: netstat/netscan‑equivalent for sockets and endpoints
+  - Open files and sockets: lsof‑equivalent views
+  - Kernel modules/hooks: loaded modules listing and hook/LSM/kprobe checks
+  - Persistence: cron jobs, systemd unit anomalies, rc scripts, SSH authorized_keys anomalies
+  - Memory maps and injection analogs: per‑process maps and shared object injection indicators
+  - YARA scanning: per‑process or region‑based scanning
+  - Parent‑child/process tree: pstree‑equivalent and anomaly detection
+
+macOS
+- Present (Dashboard defaults)
+  - Process enumeration: pslist
+  - Shell history: bash
+  - Syscall integrity: check_syscall
+- Missing (recommended to include)
+  - Network artifacts: netstat‑equivalent for macOS
+  - Open files: lsof‑equivalent
+  - Kernel extensions (kext): listing and trust/codesign status
+  - Persistence: launchd plists, login items, quarantine events
+  - Hidden processes and hierarchy anomalies: pstree‑equivalent and detection
+  - Memory maps/injection analogs: region analysis for userland injection
+  - Codesign/notarization checks: trust validation for binaries/modules
+  - YARA scanning: memory region scanning for macOS processes
+
+Cross‑OS Gaps (High Priority)
+- Unified timeline correlator: build time‑ordered events from process, network, injection, persistence for all OSes
+- Kernel‑space analytics: drivers/modules/hooks across OSes (Windows first, then Linux/mac)
+- Trainable models: integrate offline‑trained risk models with calibration, per‑PID scoring
+- IoC exports: STIX/TAXII and SIEM‑friendly CSV/JSON; UI export buttons
+
+Action Plan (Plugins/Categories to Add)
+- Windows
+  - Enable cmdline and pstree by default
+  - Add kernel driver/module enumeration and hook detection plugins
+  - Add registry/persistence artifact plugins (Run keys, tasks, WMI, services deep‑dive)
+  - Add memory map/VAD summary per process
+  - Pair PE signature checks with dump analysis results
+- Linux
+  - Add netstat/netscan and lsof equivalents
+  - Add hidden processes, kernel modules/hooks checks
+  - Add persistence scans (cron/systemd/rc)
+  - Add memory maps/injection heuristics and pstree equivalents
+  - Add YARA scanning support
+- macOS
+  - Add netstat and lsof equivalents
+  - Add kext listing and trust checks
+  - Add launchd/login items/quarantine persistence scans
+  - Add hidden process/pstree equivalents and memory region analysis
+  - Add codesign/notarization checks and YARA scanning
+
+Notes
+- Specific plugin names vary by Volatility version and environment. Use dynamic discovery to locate OS‑specific equivalents and include them in the default presets for each OS.
+- Once added, wire outputs into RiskAnalyzer (features, MITRE mapping), CapabilityAnalyzer (capability evidence), Timeline correlator (events), and Reports (tables/sections).

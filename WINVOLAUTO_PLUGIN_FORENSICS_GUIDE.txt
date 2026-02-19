@@ -1,0 +1,76 @@
+WinVolAuto Plugin Forensics Guide
+
+Purpose
+- Help investigators understand how each plugin supports common forensic goals
+- Provide quick, practical steps to run plugins and interpret results
+
+How To Use
+- Open Dashboard, select plugins from the tree, set options, run analysis
+- Review Results and Process Tree; generate JSON/PDF from Reports tab
+- Enable AI Risk Probability to rank suspicious PIDs and highlight risk
+
+Windows Internal Plugins (Sumit K.K.)
+- internal.win.cmdline
+  - Finds risky command lines: encoded payloads, web downloads, living-off-the-land usage
+  - Use when triaging initial access or execution; looks for -enc, certutil, bitsadmin, mshta, etc.
+  - Action: Investigate PIDs with suspicious args; pivot to malfind, netscan, dlllist
+- internal.win.pstree
+  - Highlights orphan processes and unusual parent-child pairs
+  - Use to spot process lineage anomalies (e.g., services.exe spawning powershell.exe)
+  - Action: Confirm legitimacy of parent; dump child process memory for analysis
+- internal.win.kernel_scan
+  - Summarizes kernel callbacks that may indicate hooks or rootkit behavior
+  - Use when suspecting stealth techniques beyond userland injection
+  - Action: Cross-check unsigned drivers; correlate with callbacks for rootkit indicators
+- internal.win.persistence_scan
+  - Flags services loading from Temp/AppData and other nonstandard paths
+  - Use for persistence discovery and cleanup planning
+  - Action: Validate binaries and paths; search autoruns; compare with registry autorun keys
+- internal.win.text_scan
+  - Finds text-like files in memory, shows path, file name, and preview text
+  - Use to collect notes, scripts, logs left by attackers; triage folder distribution
+  - Action: Review previews; export notable items; correlate with cmdline and netscan findings
+
+Linux Internal Plugins (Sumit K.K.)
+- internal.linux.pslist
+  - Flags execution from /tmp or /dev/shm and root shells
+  - Use to quickly identify suspicious execution paths and privileged shells
+  - Action: Inspect binaries and paths; capture volatile artifacts for IR
+- internal.linux.bash
+  - Summarizes risky bash history commands
+  - Use to reconstruct attacker actions and intent
+  - Action: Review samples; follow leads for downloads, encoders, and lateral movement
+- internal.linux.check_syscall
+  - Counts hooked syscalls indicating kernel rootkits
+  - Use when suspecting kernel-level tampering
+  - Action: Investigate loaded modules; verify integrity; capture for offline analysis
+- internal.linux.elfs
+  - Flags ELF modules loaded from transient folders
+  - Use to catch runtime-loaded artifacts and stealthy modules
+  - Action: Map modules to processes; dump and scan with AV or sandbox tools
+
+Core Volatility Plugins (Windows)
+- windows.pslist / windows.psscan / windows.pstree
+  - Baseline processes, hidden processes, and hierarchy
+  - Use for execution mapping and DKOM detection
+- windows.malfind
+  - Identifies injected code; critical for process compromise confirmation
+- windows.netscan
+  - Shows active and recently closed connections; trace C2 or exfil routes
+- windows.dlllist / windows.handles
+  - Enumerate modules and open handles; find injected libraries and suspicious files
+- windows.svcscan
+  - Enumerates services; identify abnormal locations or names for persistence
+- windows.filescan / windows.dumpfiles
+  - Carves file objects and extracts artifacts from memory for offline analysis
+
+Reports And AI
+- JSON/PDF reports include plugin descriptions and structured tables
+- AI Risk Probability ranks PIDs based on signals; MITRE mapping explains context
+- Malware Capabilities summarize likely adversary functions with evidence
+
+Best Practices
+- Run baseline plugins first, then targeted ones based on findings
+- Keep AI Risk Probability enabled to focus quickly on top risks
+- Verify findings with multiple plugins (e.g., cmdline + malfind + netscan)
+- Export suspicious artifacts for offline reverse engineering and AV scanning

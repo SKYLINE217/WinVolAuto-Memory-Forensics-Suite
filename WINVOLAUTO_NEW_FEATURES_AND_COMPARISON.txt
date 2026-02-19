@@ -1,0 +1,135 @@
+WinVolAuto – New Features (Detailed) and Comparison with Volatility Workbench
+
+1. Overview
+- This document records all new functionality added to WinVolAuto, explains the architecture changes, and compares the final version to Volatility Workbench.
+- Focus areas: AI-driven risk assessment, capability inference, reporting, UI/triage, engine resilience, and configuration performance.
+
+2. New Functionality Added
+- AI Risk Probability (Global and Per‑PID)
+  - A logistic model estimates the probability of malicious activity based on features extracted from plugin outputs:
+    - Code injection (windows.malfind)
+    - Hidden processes (windows.pslist vs windows.psscan)
+    - Suspicious ports and risky connections (windows.netscan)
+    - Process hierarchy anomalies and masquerading (windows.pslist)
+    - Encoded PowerShell and execution from Temp/AppData (windows.cmdline)
+  - Outputs:
+    - Global probability (0–100%), integrated in the “Analysis Complete” summary
+    - Per‑PID probabilities for targeted triage
+  - Files: src/backend/risk_analyzer.py, src/ui/main_window.py
+
+- AI Toggle in Dashboard
+  - Global option “Enable AI Risk Probability” to enable/disable AI scoring.
+  - Files: src/ui/dashboard.py
+
+- MITRE ATT&CK Technique Mapping
+  - Maps detected signals to technique IDs (e.g., T1055, T1564, T1036, T1059.001, T1071, T1041, T1105).
+  - Included in risk report and displayed in the PDF Executive Summary.
+  - Files: src/backend/risk_analyzer.py, src/backend/report_generator.py
+
+- Risk Summary in Results and Probability in Summary Dialog
+  - Adds “Risk Summary” entry under Results for drill-down into the full risk report payload.
+  - “Analysis Complete” popup shows probability, risk level, and score.
+  - Files: src/ui/main_window.py, src/ui/results_view.py
+
+- Process Tree Highlights (Suspicious PIDs)
+  - Highlights suspicious processes in red based on union of heuristic suspicious_pids plus per‑PID AI probability (≥60%).
+  - Files: src/ui/process_tree.py, src/ui/main_window.py
+
+- Malware Capability Analyzer
+  - New backend infers high-level malware functions/capabilities and provides concise evidence:
+    - Command and Control, Persistence, Code Injection, Masquerading/Evasion, Execution, Stealth, Exfiltration Potential
+  - Evidence sources: netscan, malfind, cmdline, pslist/psscan, svcscan, callbacks
+  - Ranked capabilities by evidence-driven scoring; limited evidence lines per capability for readability.
+  - Files: src/backend/capability_analyzer.py, src/ui/main_window.py
+
+- Report Enhancements (JSON/PDF)
+  - JSON report adds “malware_capabilities”
+  - PDF Executive Summary includes:
+    - Risk Probability and MITRE techniques
+    - Top Suspicious Processes table (by per‑PID probability)
+    - New “Malware Capabilities” section with evidence bullets
+  - Files: src/backend/report_generator.py, src/ui/reports_tab.py
+
+- Robust Volatility JSON Parsing Fallback
+  - When the CLI returns line‑based or mixed JSON, fallback parsing attempts to decode line by line to reduce failure rate.
+  - Files: src/backend/volatility_engine.py
+
+- Plugin Option Caching
+  - Caches per‑plugin options discovered via “-h” to avoid repeated subprocess calls during configuration.
+  - Files: src/backend/plugin_discovery.py
+
+3. Architecture Changes (References)
+- Risk Analyzer
+  - Extended scoring and feature extraction; added AI probability and per‑PID probabilities; technique mapping.
+  - Reference: d:\Riot Games\Automate volatility\src\backend\risk_analyzer.py
+- Capability Analyzer
+  - New module that transforms plugin outputs into human‑readable malware capability summaries.
+  - Reference: d:\Riot Games\Automate volatility\src\backend\capability_analyzer.py
+- Main Window Flow
+  - After plugin runs, invokes risk analysis, capability analysis, updates Results, highlights Process Tree, and passes data to Reports.
+  - Reference: d:\Riot Games\Automate volatility\src\ui\main_window.py
+- Dashboard
+  - Adds AI toggle under Global Options; propagates ai_enabled in analysis options.
+  - Reference: d:\Riot Games\Automate volatility\src\ui\dashboard.py
+- Reports
+  - JSON/PDF report generation is enriched with new sections and tables.
+  - Reference: d:\Riot Games\Automate volatility\src\backend\report_generator.py and d:\Riot Games\Automate volatility\src\ui\reports_tab.py
+- Engine and Discovery
+  - VolatilityEngine now has robust parsing fallback; PluginDiscovery caches options.
+  - References: d:\Riot Games\Automate volatility\src\backend\volatility_engine.py and d:\Riot Games\Automate volatility\src\backend\plugin_discovery.py
+
+4. User Workflow Changes
+- Dashboard
+  - Enable/disable AI risk probability in Global Options
+  - Select memory image and plugins; start analysis
+- During Analysis
+  - Queue shows plugin status; Results accumulates per‑plugin outputs
+  - Process Tree draws on pslist and highlights suspicious PIDs
+- Completion
+  - Summary popup: risk level, score, probability, findings
+  - Results: “Risk Summary” and “Capabilities”
+  - Reports Tab: export JSON/PDF with MITRE and Capabilities sections
+
+5. Validation and Diagnostics
+- Editor diagnostics show clean status for updated modules.
+- Integration leverages existing dependencies (PyQt6, volatility3, requests, reportlab).
+- No secrets or API keys stored in code; VT key continues to be read from config.json.
+
+6. Comparison: WinVolAuto (Final Version) vs Volatility Workbench
+- Scope and Philosophy
+  - Volatility Workbench: GUI front‑end for Volatility focused on running plugins and viewing outputs, generally without higher‑level analytics.
+  - WinVolAuto: Adds AI‑driven scoring, capability inference, and rich reporting targeting triage, decision support, and handoffs.
+- Risk Assessment
+  - Workbench: No built‑in risk scoring or probabilities.
+  - WinVolAuto: Heuristic scoring + logistic AI probability (global and per‑PID), suspicious PID highlighting, risk summary view.
+- Capability Inference
+  - Workbench: Presents raw plugin output; capability inference is typically manual.
+  - WinVolAuto: Automatic capability detection (C2, persistence, injection, evasion, execution, stealth, exfil potential) with evidence.
+- Threat Context (MITRE)
+  - Workbench: Does not map findings to ATT&CK techniques by default.
+  - WinVolAuto: MITRE techniques included in risk output and PDF Executive Summary.
+- Reporting
+  - Workbench: Limited export options; focused on raw results display.
+  - WinVolAuto: PDF with visuals and executive sections, JSON with full risk and capabilities, quick VT links and top PID table.
+- Triage UX
+  - Workbench: Presents plugin results; relies on analyst to pivot and correlate manually.
+  - WinVolAuto: Risk Summary node, per‑PID probabilities, Process Tree highlights, capability evidence bullets guiding the analyst.
+- Engine Resilience
+  - Workbench: Strict parsing based on Volatility output conventions.
+  - WinVolAuto: Fallback JSON parsing for mixed outputs to reduce failures; option caching for smoother UI configuration.
+- Extensibility and Automation
+  - Workbench: Strong baseline for Volatility plugin operations, less emphasis on automation of risk and narrative outputs.
+  - WinVolAuto: Designed to integrate analysis, inference, and reporting for automated handoffs and decision‑making.
+
+7. Future Directions
+- Kernel‑space coverage (drivers, hooks)
+- Unified event timeline visualization
+- Trainable models with confidence calibration
+- STIX/TAXII IoC exports and SIEM integration
+
+8. Summary
+- WinVolAuto now provides a comprehensive triage and reporting layer on top of Volatility 3:
+  - AI probability (global and per‑PID), MITRE mapping, capability inference
+  - Enhanced PDF/JSON reporting and visual cues in the UI
+  - Resilient parsing and improved configuration performance
+  - Distinct value beyond traditional plugin‑only workbenches

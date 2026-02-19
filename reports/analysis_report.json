@@ -1,0 +1,1282 @@
+{
+    "metadata": {
+        "generated_at": "2026-02-11 11:59:02.302677",
+        "file_analyzed": "D:/Games/vm_memory.elf",
+        "file_name": "vm_memory.elf"
+    },
+    "risk_analysis": {
+        "total_score": 15,
+        "details": [
+            "Suspicious Command Lines (Risk: +15): Process running from Temp/AppData (PID 1704)"
+        ],
+        "suspicious_pids": [
+            "1704"
+        ],
+        "level": "Low",
+        "probability": 0.10909682119561294,
+        "ai_features": {
+            "injections": 0,
+            "hidden": 0,
+            "susp_ports": 0,
+            "risky_conns": 0,
+            "hier_anoms": 0,
+            "encoded": 0,
+            "temp_exec": 1
+        },
+        "pid_probabilities": {
+            "1704": 0.10909682119561294
+        },
+        "mitre_techniques": [
+            "T1036",
+            "T1105"
+        ]
+    },
+    "results": {
+        "windows.cmdline": [
+            {
+                "Args": null,
+                "PID": 4,
+                "Process": "System",
+                "__children": []
+            },
+            {
+                "Args": "\\SystemRoot\\System32\\smss.exe",
+                "PID": 256,
+                "Process": "smss.exe",
+                "__children": []
+            },
+            {
+                "Args": "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,12288,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitialization,2 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16",
+                "PID": 324,
+                "Process": "csrss.exe",
+                "__children": []
+            },
+            {
+                "Args": "wininit.exe",
+                "PID": 372,
+                "Process": "wininit.exe",
+                "__children": []
+            },
+            {
+                "Args": "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,12288,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitialization,2 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16",
+                "PID": 380,
+                "Process": "csrss.exe",
+                "__children": []
+            },
+            {
+                "Args": "winlogon.exe",
+                "PID": 420,
+                "Process": "winlogon.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\services.exe",
+                "PID": 464,
+                "Process": "services.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\lsass.exe",
+                "PID": 480,
+                "Process": "lsass.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\lsm.exe",
+                "PID": 488,
+                "Process": "lsm.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k DcomLaunch",
+                "PID": 592,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k RPCSS",
+                "PID": 668,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\svchost.exe -k LocalServiceNetworkRestricted",
+                "PID": 756,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\svchost.exe -k LocalSystemNetworkRestricted",
+                "PID": 804,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k netsvcs",
+                "PID": 840,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\AUDIODG.EXE 0x2b8",
+                "PID": 920,
+                "Process": "audiodg.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k LocalService",
+                "PID": 964,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k NetworkService",
+                "PID": 1072,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\spoolsv.exe",
+                "PID": 1256,
+                "Process": "spoolsv.exe",
+                "__children": []
+            },
+            {
+                "Args": "\"taskhost.exe\"",
+                "PID": 1264,
+                "Process": "taskhost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k LocalServiceNoNetwork",
+                "PID": 1316,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Windows\\system32\\Dwm.exe\"",
+                "PID": 1364,
+                "Process": "dwm.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\Explorer.EXE",
+                "PID": 1388,
+                "Process": "explorer.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\SearchIndexer.exe /Embedding",
+                "PID": 1384,
+                "Process": "SearchIndexer.",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Windows\\system32\\SearchProtocolHost.exe\" Global\\UsGthrFltPipeMssGthrPipe1_ Global\\UsGthrCtrlFltPipeMssGthrPipe1 1 -2147483646 \"Software\\Microsoft\\Windows Search\" \"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT; MS Search 4.0 Robot)\" \"C:\\ProgramData\\Microsoft\\Search\\Data\\Temp\\usgthrsvc\" \"DownLevelDaemon\" ",
+                "PID": 1704,
+                "Process": "SearchProtocol",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Windows\\system32\\SearchFilterHost.exe\" 0 520 524 532 65536 528 ",
+                "PID": 1908,
+                "Process": "SearchFilterHo",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" ",
+                "PID": 1844,
+                "Process": "iexplore.exe",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" SCODEF:1844 CREDAT:71937",
+                "PID": 456,
+                "Process": "iexplore.exe",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" SCODEF:1844 CREDAT:6405",
+                "PID": 2640,
+                "Process": "iexplore.exe",
+                "__children": []
+            },
+            {
+                "Args": "\"C:\\Windows\\system32\\wbengine.exe\"",
+                "PID": 3244,
+                "Process": "wbengine.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                "PID": 3300,
+                "Process": "WmiPrvSE.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\vssvc.exe",
+                "PID": 3384,
+                "Process": "VSSVC.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\svchost.exe -k swprv",
+                "PID": 3420,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\vds.exe",
+                "PID": 3480,
+                "Process": "vds.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                "PID": 3548,
+                "Process": "WmiPrvSE.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\svchost.exe -k LocalServiceAndNoImpersonation",
+                "PID": 780,
+                "Process": "svchost.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\system32\\sppsvc.exe",
+                "PID": 364,
+                "Process": "sppsvc.exe",
+                "__children": []
+            },
+            {
+                "Args": "C:\\Windows\\System32\\svchost.exe -k secsvcs",
+                "PID": 2040,
+                "Process": "svchost.exe",
+                "__children": []
+            }
+        ],
+        "windows.pstree": [
+            {
+                "Audit": null,
+                "Cmd": null,
+                "CreateTime": "2026-02-10T18:59:14+00:00",
+                "ExitTime": null,
+                "Handles": 480,
+                "ImageFileName": "System",
+                "Offset(V)": 2223245976,
+                "PID": 4,
+                "PPID": 0,
+                "Path": null,
+                "SessionId": null,
+                "Threads": 92,
+                "Wow64": false,
+                "__children": [
+                    {
+                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\smss.exe",
+                        "Cmd": "\\SystemRoot\\System32\\smss.exe",
+                        "CreateTime": "2026-02-10T18:59:14+00:00",
+                        "ExitTime": null,
+                        "Handles": 34,
+                        "ImageFileName": "smss.exe",
+                        "Offset(V)": 2240329264,
+                        "PID": 256,
+                        "PPID": 4,
+                        "Path": "\\SystemRoot\\System32\\smss.exe",
+                        "SessionId": null,
+                        "Threads": 2,
+                        "Wow64": false,
+                        "__children": []
+                    }
+                ]
+            },
+            {
+                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\csrss.exe",
+                "Cmd": "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,12288,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitialization,2 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16",
+                "CreateTime": "2026-02-10T18:59:16+00:00",
+                "ExitTime": null,
+                "Handles": 441,
+                "ImageFileName": "csrss.exe",
+                "Offset(V)": 2239540208,
+                "PID": 324,
+                "PPID": 308,
+                "Path": "C:\\Windows\\system32\\csrss.exe",
+                "SessionId": 0,
+                "Threads": 10,
+                "Wow64": false,
+                "__children": []
+            },
+            {
+                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\wininit.exe",
+                "Cmd": "wininit.exe",
+                "CreateTime": "2026-02-10T18:59:17+00:00",
+                "ExitTime": null,
+                "Handles": 83,
+                "ImageFileName": "wininit.exe",
+                "Offset(V)": 2239085888,
+                "PID": 372,
+                "PPID": 308,
+                "Path": "C:\\Windows\\system32\\wininit.exe",
+                "SessionId": 0,
+                "Threads": 3,
+                "Wow64": false,
+                "__children": [
+                    {
+                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\services.exe",
+                        "Cmd": "C:\\Windows\\system32\\services.exe",
+                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                        "ExitTime": null,
+                        "Handles": 229,
+                        "ImageFileName": "services.exe",
+                        "Offset(V)": 2247496296,
+                        "PID": 464,
+                        "PPID": 372,
+                        "Path": "C:\\Windows\\system32\\services.exe",
+                        "SessionId": 0,
+                        "Threads": 14,
+                        "Wow64": false,
+                        "__children": [
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\System32\\svchost.exe -k LocalSystemNetworkRestricted",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 314,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2250261360,
+                                "PID": 804,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 15,
+                                "Wow64": false,
+                                "__children": [
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\dwm.exe",
+                                        "Cmd": "\"C:\\Windows\\system32\\Dwm.exe\"",
+                                        "CreateTime": "2026-02-10T18:59:18+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 59,
+                                        "ImageFileName": "dwm.exe",
+                                        "Offset(V)": 2251269376,
+                                        "PID": 1364,
+                                        "PPID": 804,
+                                        "Path": "C:\\Windows\\system32\\Dwm.exe",
+                                        "SessionId": 1,
+                                        "Threads": 4,
+                                        "Wow64": false,
+                                        "__children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k LocalService",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 429,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2250431624,
+                                "PID": 964,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 17,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k LocalServiceNoNetwork",
+                                "CreateTime": "2026-02-10T18:59:18+00:00",
+                                "ExitTime": null,
+                                "Handles": 335,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2251189568,
+                                "PID": 1316,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 21,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\vds.exe",
+                                "Cmd": "C:\\Windows\\System32\\vds.exe",
+                                "CreateTime": "2026-02-10T19:00:48+00:00",
+                                "ExitTime": null,
+                                "Handles": 141,
+                                "ImageFileName": "vds.exe",
+                                "Offset(V)": 2224647488,
+                                "PID": 3480,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\vds.exe",
+                                "SessionId": 0,
+                                "Threads": 15,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k netsvcs",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 1030,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2250294984,
+                                "PID": 840,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 46,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\spoolsv.exe",
+                                "Cmd": "C:\\Windows\\System32\\spoolsv.exe",
+                                "CreateTime": "2026-02-10T18:59:18+00:00",
+                                "ExitTime": null,
+                                "Handles": 297,
+                                "ImageFileName": "spoolsv.exe",
+                                "Offset(V)": 2251145264,
+                                "PID": 1256,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\spoolsv.exe",
+                                "SessionId": 0,
+                                "Threads": 15,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\SearchIndexer.exe",
+                                "Cmd": "C:\\Windows\\system32\\SearchIndexer.exe /Embedding",
+                                "CreateTime": "2026-02-10T18:59:24+00:00",
+                                "ExitTime": null,
+                                "Handles": 604,
+                                "ImageFileName": "SearchIndexer.",
+                                "Offset(V)": 2223359064,
+                                "PID": 1384,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\SearchIndexer.exe",
+                                "SessionId": 0,
+                                "Threads": 15,
+                                "Wow64": false,
+                                "__children": [
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\SearchProtocolHost.exe",
+                                        "Cmd": "\"C:\\Windows\\system32\\SearchProtocolHost.exe\" Global\\UsGthrFltPipeMssGthrPipe1_ Global\\UsGthrCtrlFltPipeMssGthrPipe1 1 -2147483646 \"Software\\Microsoft\\Windows Search\" \"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT; MS Search 4.0 Robot)\" \"C:\\ProgramData\\Microsoft\\Search\\Data\\Temp\\usgthrsvc\" \"DownLevelDaemon\" ",
+                                        "CreateTime": "2026-02-10T18:59:24+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 405,
+                                        "ImageFileName": "SearchProtocol",
+                                        "Offset(V)": 2252031216,
+                                        "PID": 1704,
+                                        "PPID": 1384,
+                                        "Path": "C:\\Windows\\system32\\SearchProtocolHost.exe",
+                                        "SessionId": 0,
+                                        "Threads": 9,
+                                        "Wow64": false,
+                                        "__children": []
+                                    },
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\SearchFilterHost.exe",
+                                        "Cmd": "\"C:\\Windows\\system32\\SearchFilterHost.exe\" 0 520 524 532 65536 528 ",
+                                        "CreateTime": "2026-02-10T18:59:24+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 142,
+                                        "ImageFileName": "SearchFilterHo",
+                                        "Offset(V)": 2252513328,
+                                        "PID": 1908,
+                                        "PPID": 1384,
+                                        "Path": "C:\\Windows\\system32\\SearchFilterHost.exe",
+                                        "SessionId": 0,
+                                        "Threads": 8,
+                                        "Wow64": false,
+                                        "__children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\sppsvc.exe",
+                                "Cmd": "C:\\Windows\\system32\\sppsvc.exe",
+                                "CreateTime": "2026-02-10T19:01:19+00:00",
+                                "ExitTime": null,
+                                "Handles": 159,
+                                "ImageFileName": "sppsvc.exe",
+                                "Offset(V)": 2227018464,
+                                "PID": 364,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\sppsvc.exe",
+                                "SessionId": 0,
+                                "Threads": 6,
+                                "Wow64": false,
+                                "__children": [
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\winlogon.exe",
+                                        "Cmd": "winlogon.exe",
+                                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 116,
+                                        "ImageFileName": "winlogon.exe",
+                                        "Offset(V)": 2239221056,
+                                        "PID": 420,
+                                        "PPID": 364,
+                                        "Path": "C:\\Windows\\system32\\winlogon.exe",
+                                        "SessionId": 1,
+                                        "Threads": 4,
+                                        "Wow64": false,
+                                        "__children": []
+                                    },
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\csrss.exe",
+                                        "Cmd": "%SystemRoot%\\system32\\csrss.exe ObjectDirectory=\\Windows SharedSection=1024,12288,512 Windows=On SubSystemType=Windows ServerDll=basesrv,1 ServerDll=winsrv:UserServerDllInitialization,3 ServerDll=winsrv:ConServerDllInitialization,2 ServerDll=sxssrv,4 ProfileControl=Off MaxRequestThreads=16",
+                                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 250,
+                                        "ImageFileName": "csrss.exe",
+                                        "Offset(V)": 2239107616,
+                                        "PID": 380,
+                                        "PPID": 364,
+                                        "Path": "C:\\Windows\\system32\\csrss.exe",
+                                        "SessionId": 1,
+                                        "Threads": 8,
+                                        "Wow64": false,
+                                        "__children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\wbengine.exe",
+                                "Cmd": "\"C:\\Windows\\system32\\wbengine.exe\"",
+                                "CreateTime": "2026-02-10T19:00:47+00:00",
+                                "ExitTime": null,
+                                "Handles": 108,
+                                "ImageFileName": "wbengine.exe",
+                                "Offset(V)": 2225044008,
+                                "PID": 3244,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\wbengine.exe",
+                                "SessionId": 0,
+                                "Threads": 8,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k LocalServiceAndNoImpersonation",
+                                "CreateTime": "2026-02-10T19:01:19+00:00",
+                                "ExitTime": null,
+                                "Handles": 161,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2249322544,
+                                "PID": 780,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 13,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k DcomLaunch",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 374,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2249977904,
+                                "PID": 592,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 14,
+                                "Wow64": false,
+                                "__children": [
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\wbem\\WmiPrvSE.exe",
+                                        "Cmd": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                                        "CreateTime": "2026-02-10T19:00:49+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 123,
+                                        "ImageFileName": "WmiPrvSE.exe",
+                                        "Offset(V)": 2227991512,
+                                        "PID": 3548,
+                                        "PPID": 592,
+                                        "Path": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                                        "SessionId": 0,
+                                        "Threads": 8,
+                                        "Wow64": false,
+                                        "__children": []
+                                    },
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\wbem\\WmiPrvSE.exe",
+                                        "Cmd": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                                        "CreateTime": "2026-02-10T19:00:48+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 179,
+                                        "ImageFileName": "WmiPrvSE.exe",
+                                        "Offset(V)": 2225095368,
+                                        "PID": 3300,
+                                        "PPID": 592,
+                                        "Path": "C:\\Windows\\system32\\wbem\\wmiprvse.exe",
+                                        "SessionId": 0,
+                                        "Threads": 8,
+                                        "Wow64": false,
+                                        "__children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k NetworkService",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 399,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2247464440,
+                                "PID": 1072,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 19,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\taskhost.exe",
+                                "Cmd": "\"taskhost.exe\"",
+                                "CreateTime": "2026-02-10T18:59:18+00:00",
+                                "ExitTime": null,
+                                "Handles": 154,
+                                "ImageFileName": "taskhost.exe",
+                                "Offset(V)": 2251143856,
+                                "PID": 1264,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\taskhost.exe",
+                                "SessionId": 1,
+                                "Threads": 11,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\System32\\svchost.exe -k LocalServiceNetworkRestricted",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 465,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2250202432,
+                                "PID": 756,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 21,
+                                "Wow64": false,
+                                "__children": [
+                                    {
+                                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\audiodg.exe",
+                                        "Cmd": "C:\\Windows\\system32\\AUDIODG.EXE 0x2b8",
+                                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                                        "ExitTime": null,
+                                        "Handles": 135,
+                                        "ImageFileName": "audiodg.exe",
+                                        "Offset(V)": 2250379504,
+                                        "PID": 920,
+                                        "PPID": 756,
+                                        "Path": "C:\\Windows\\system32\\AUDIODG.EXE",
+                                        "SessionId": 0,
+                                        "Threads": 7,
+                                        "Wow64": false,
+                                        "__children": []
+                                    }
+                                ]
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\System32\\svchost.exe -k swprv",
+                                "CreateTime": "2026-02-10T19:00:48+00:00",
+                                "ExitTime": null,
+                                "Handles": 71,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2226801984,
+                                "PID": 3420,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 7,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\VSSVC.exe",
+                                "Cmd": "C:\\Windows\\system32\\vssvc.exe",
+                                "CreateTime": "2026-02-10T19:00:48+00:00",
+                                "ExitTime": null,
+                                "Handles": 125,
+                                "ImageFileName": "VSSVC.exe",
+                                "Offset(V)": 2226947184,
+                                "PID": 3384,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\vssvc.exe",
+                                "SessionId": 0,
+                                "Threads": 7,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\System32\\svchost.exe -k secsvcs",
+                                "CreateTime": "2026-02-10T19:01:19+00:00",
+                                "ExitTime": null,
+                                "Handles": 325,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2227016248,
+                                "PID": 2040,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\System32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 14,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\svchost.exe",
+                                "Cmd": "C:\\Windows\\system32\\svchost.exe -k RPCSS",
+                                "CreateTime": "2026-02-10T18:59:17+00:00",
+                                "ExitTime": null,
+                                "Handles": 286,
+                                "ImageFileName": "svchost.exe",
+                                "Offset(V)": 2249257008,
+                                "PID": 668,
+                                "PPID": 464,
+                                "Path": "C:\\Windows\\system32\\svchost.exe",
+                                "SessionId": 0,
+                                "Threads": 8,
+                                "Wow64": false,
+                                "__children": []
+                            }
+                        ]
+                    },
+                    {
+                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\lsass.exe",
+                        "Cmd": "C:\\Windows\\system32\\lsass.exe",
+                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                        "ExitTime": null,
+                        "Handles": 613,
+                        "ImageFileName": "lsass.exe",
+                        "Offset(V)": 2249732520,
+                        "PID": 480,
+                        "PPID": 372,
+                        "Path": "C:\\Windows\\system32\\lsass.exe",
+                        "SessionId": 0,
+                        "Threads": 9,
+                        "Wow64": false,
+                        "__children": []
+                    },
+                    {
+                        "Audit": "\\Device\\HarddiskVolume1\\Windows\\System32\\lsm.exe",
+                        "Cmd": "C:\\Windows\\system32\\lsm.exe",
+                        "CreateTime": "2026-02-10T18:59:17+00:00",
+                        "ExitTime": null,
+                        "Handles": 145,
+                        "ImageFileName": "lsm.exe",
+                        "Offset(V)": 2249728048,
+                        "PID": 488,
+                        "PPID": 372,
+                        "Path": "C:\\Windows\\system32\\lsm.exe",
+                        "SessionId": 0,
+                        "Threads": 10,
+                        "Wow64": false,
+                        "__children": []
+                    }
+                ]
+            },
+            {
+                "Audit": "\\Device\\HarddiskVolume1\\Windows\\explorer.exe",
+                "Cmd": "C:\\Windows\\Explorer.EXE",
+                "CreateTime": "2026-02-10T18:59:18+00:00",
+                "ExitTime": null,
+                "Handles": 860,
+                "ImageFileName": "explorer.exe",
+                "Offset(V)": 2251319256,
+                "PID": 1388,
+                "PPID": 1332,
+                "Path": "C:\\Windows\\Explorer.EXE",
+                "SessionId": 1,
+                "Threads": 37,
+                "Wow64": false,
+                "__children": [
+                    {
+                        "Audit": "\\Device\\HarddiskVolume1\\Program Files\\Internet Explorer\\iexplore.exe",
+                        "Cmd": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" ",
+                        "CreateTime": "2026-02-10T19:00:23+00:00",
+                        "ExitTime": null,
+                        "Handles": 539,
+                        "ImageFileName": "iexplore.exe",
+                        "Offset(V)": 2252682768,
+                        "PID": 1844,
+                        "PPID": 1388,
+                        "Path": "C:\\Program Files\\Internet Explorer\\iexplore.exe",
+                        "SessionId": 1,
+                        "Threads": 23,
+                        "Wow64": false,
+                        "__children": [
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Program Files\\Internet Explorer\\iexplore.exe",
+                                "Cmd": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" SCODEF:1844 CREDAT:71937",
+                                "CreateTime": "2026-02-10T19:00:23+00:00",
+                                "ExitTime": null,
+                                "Handles": 451,
+                                "ImageFileName": "iexplore.exe",
+                                "Offset(V)": 2248957248,
+                                "PID": 456,
+                                "PPID": 1844,
+                                "Path": "C:\\Program Files\\Internet Explorer\\iexplore.exe",
+                                "SessionId": 1,
+                                "Threads": 22,
+                                "Wow64": false,
+                                "__children": []
+                            },
+                            {
+                                "Audit": "\\Device\\HarddiskVolume1\\Program Files\\Internet Explorer\\iexplore.exe",
+                                "Cmd": "\"C:\\Program Files\\Internet Explorer\\iexplore.exe\" SCODEF:1844 CREDAT:6405",
+                                "CreateTime": "2026-02-10T19:00:34+00:00",
+                                "ExitTime": null,
+                                "Handles": 394,
+                                "ImageFileName": "iexplore.exe",
+                                "Offset(V)": 2223342112,
+                                "PID": 2640,
+                                "PPID": 1844,
+                                "Path": "C:\\Program Files\\Internet Explorer\\iexplore.exe",
+                                "SessionId": 1,
+                                "Threads": 17,
+                                "Wow64": false,
+                                "__children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "internal.win.kernel_scan": {
+            "callbacks_count": 93,
+            "items": [
+                {
+                    "Callback": 2192201448,
+                    "Detail": null,
+                    "Module": "ntoskrnl",
+                    "Symbol": "EtwpTraceLoadImage",
+                    "Type": "PspLoadImageNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2190295355,
+                    "Detail": null,
+                    "Module": "ntoskrnl",
+                    "Symbol": "ViCreateProcessCallback",
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304207320,
+                    "Detail": null,
+                    "Module": "ksecdd",
+                    "Symbol": null,
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304253334,
+                    "Detail": null,
+                    "Module": "cng",
+                    "Symbol": null,
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2307540691,
+                    "Detail": null,
+                    "Module": "tcpip",
+                    "Symbol": null,
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2299674108,
+                    "Detail": null,
+                    "Module": "CI",
+                    "Symbol": null,
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2471956953,
+                    "Detail": null,
+                    "Module": "peauth",
+                    "Symbol": null,
+                    "Type": "PspCreateProcessNotifyRoutine",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304935520,
+                    "Detail": null,
+                    "Module": "ndis",
+                    "Symbol": null,
+                    "Type": "KeBugCheckCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304935520,
+                    "Detail": null,
+                    "Module": "ndis",
+                    "Symbol": null,
+                    "Type": "KeBugCheckCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304935520,
+                    "Detail": null,
+                    "Module": "ndis",
+                    "Symbol": null,
+                    "Type": "KeBugCheckCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2189515158,
+                    "Detail": null,
+                    "Module": "hal",
+                    "Symbol": null,
+                    "Type": "KeBugCheckCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "PEAUTH",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "monitor",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2440270270,
+                    "Detail": "CRASHDUMP",
+                    "Module": "crashdmp",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2440234254,
+                    "Detail": "mouhid",
+                    "Module": "mouhid",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2440141500,
+                    "Detail": "HidUsb",
+                    "Module": "HIDCLASS",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2440075358,
+                    "Detail": "HidUsb",
+                    "Module": "hidusb",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2438945242,
+                    "Detail": "USBHUB",
+                    "Module": "usbhub",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2438945157,
+                    "Detail": "USBHUB",
+                    "Module": "usbhub",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "umbus",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "CompositeBus",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "intelppm",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2437492287,
+                    "Detail": "USBPORT",
+                    "Module": "USBPORT",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2437492470,
+                    "Detail": "USBPORT",
+                    "Module": "USBPORT",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2437492380,
+                    "Detail": "USBPORT",
+                    "Module": "USBPORT",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "HDAudBus",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2298590709,
+                    "Detail": "mouclass",
+                    "Module": "mouclass",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2302687329,
+                    "Detail": "kbdclass",
+                    "Module": "kbdclass",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2298513621,
+                    "Detail": "i8042prt",
+                    "Module": "i8042prt",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2306453228,
+                    "Detail": "SMBiosData",
+                    "Module": "mssmbios",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2306453156,
+                    "Detail": "SMBiosRegistry",
+                    "Module": "mssmbios",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2306453076,
+                    "Detail": "SMBiosRegisters",
+                    "Module": "mssmbios",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2306453004,
+                    "Detail": "SMBiosDataACPI",
+                    "Module": "mssmbios",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2310022034,
+                    "Detail": "Videoprt",
+                    "Module": "VIDEOPRT",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "cdrom",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2309814409,
+                    "Detail": "cdrom",
+                    "Module": "cdrom",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2309481727,
+                    "Detail": "CLASSPNP",
+                    "Module": "CLASSPNP",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "vdrvroot",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300663597,
+                    "Detail": "msisadrv",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2300662314,
+                    "Detail": "Wdf01000",
+                    "Module": "Wdf01000",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 2302071462,
+                    "Detail": "IDEP",
+                    "Module": "ataport",
+                    "Symbol": null,
+                    "Type": "KeBugCheckReasonCallbackListHead",
+                    "__children": []
+                },
+                {
+                    "Callback": 4173358312,
+                    "Detail": null,
+                    "Module": null,
+                    "Symbol": null,
+                    "Type": "GenericKernelCallback",
+                    "__children": []
+                },
+                {
+                    "Callback": 2190295355,
+                    "Detail": null,
+                    "Module": "ntoskrnl",
+                    "Symbol": "ViCreateProcessCallback",
+                    "Type": "GenericKernelCallback",
+                    "__children": []
+                },
+                {
+                    "Callback": 2192655541,
+                    "Detail": "\\FileSystem\\RAW",
+                    "Module": "ntoskrnl",
+                    "Symbol": "RawShutdown",
+                    "Type": "IoRegisterShutdownNotification",
+                    "__children": []
+                },
+                {
+                    "Callback": 2304207380,
+                    "Detail": "\\Driver\\KSecDD",
+                    "Module": "ksecdd",
+                    "Symbol": null,
+                    "Type": "IoRegisterShutdownNotification",
+                    "__children": []
+                },
+                {
+                    "Callback": 2301972850,
+                    "Detail": "\\Driver\\mountmgr",
+                    "Module": "mountmgr",
+                    "Symbol": null,
+                    "Type": "IoRegisterShutdownNotification",
+                    "__children": []
+                },
+                {
+                    "Callback": 2307540691,
+                    "Detail": null,
+                    "Module": "tcpip",
+                    "Symbol": null,
+                    "Type": "GenericKernelCallback",
+                    "__children": []
+                },
+                {
+                    "Callback": 2437847384,
+                    "Detail": "CompositeBus",
+                    "Module": "CompositeBus",
+                    "Symbol": null,
+                    "Type": "EventCategoryDeviceInterfaceChange",
+                    "__children": []
+                },
+                {
+                    "Callback": 2308582366,
+                    "Detail": "volsnap",
+                    "Module": "volsnap",
+                    "Symbol": null,
+                    "Type": "EventCategoryTargetDeviceChange",
+                    "__children": []
+                },
+                {
+                    "Callback": 2302001710,
+                    "Detail": "mountmgr",
+                    "Module": "mountmgr",
+                    "Symbol": null,
+                    "Type": "EventCategoryTargetDeviceChange",
+                    "__children": []
+                }
+            ]
+        },
+        "internal.win.persistence_scan": {
+            "suspicious_services": []
+        }
+    },
+    "malware_capabilities": [
+        {
+            "name": "Masquerading/Evasion",
+            "desc": "Deceptive names or execution from suspicious paths.",
+            "score": 20,
+            "evidence": [
+                "Executable launched from Temp/AppData PID 1704"
+            ]
+        }
+    ]
+}

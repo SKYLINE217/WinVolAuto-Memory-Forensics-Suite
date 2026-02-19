@@ -1,0 +1,43 @@
+WinVolAuto - New And Helpful Additions (Notepad)
+
+Overview
+- This document summarizes practical, high-impact additions to improve analysis, triage, and reporting in WinVolAuto.
+- Items are grouped by outcome areas to make adoption straightforward.
+
+High-Impact Additions
+- Correlated Timeline View: unify pslist/psscan, netscan, malfind, cmdline, callbacks into a single event timeline by PID and parent.
+- MITRE ATT&CK Mapping: attach technique IDs (e.g., T1055, T1059) to risk findings and display in summaries/reports.
+- Process Tree Highlights: color-code nodes for hidden processes, injection hits, suspicious parents; add badges and filters.
+- Advanced YARA Workflow: rules manager to load/edit/run rules, display match details and quick filters for offsets/strings.
+- Parallel Plugin Execution: dependency-aware scheduling with a bounded worker pool to reduce overall runtime.
+- IoC Pack and STIX Export: build indicators (hashes, process names, ports, commands) and export STIX 2.1 or CSV.
+- PE Signature Trust Checks: analyze dumped PE files for valid signatures; flag unsigned or invalid chains; feed into risk scoring.
+- Session Save/Load: persist selected plugins, args, results, and risk report to resume triage or re-export later.
+- Headless CLI Parity: a stable CLI workflow that mirrors the UI and outputs JSON/PDF for automation.
+
+Smaller Wins
+- Robust Volatility JSON Parsing: line-aware decoder and safer fallbacks to reduce parsing errors across plugins.
+- EULA Gating And Theme Toggle: persist first-run disclaimer acceptance and add a light/dark theme toggle in UI.
+- Plugin Option Caching: cache -h parsing results to avoid repeated option discovery during configuration.
+- Results Ergonomics: CSV export per-plugin, filtering/search in results, virtualization for long tables.
+
+Expanded Risk Heuristics
+- Callbacks And Handles: parse windows.callbacks and windows.handles to flag persistence and injection techniques.
+- Command Line Enrichment: detect common PowerShell obfuscation and AMSI bypass fragments; raise risk appropriately.
+- Netscan Enrichment: add known-bad IP lists and geo/ASN lookups; increase risk for C2-like endpoints and risky binaries.
+- Masquerading Improvements: fuzzy name checks (e.g., Levenshtein distance) to catch lookalike system binaries.
+- Unsigned Drivers/DLLs: integrate PE signature checks and raise risk when unsigned or invalidly signed artifacts are present.
+
+Report Enhancements
+- Visual Risk Breakdown: pie/bar charts per anomaly type and per process using the existing matplotlib dependency.
+- Drill-Down Links: include VirusTotal links and annotate malfind memory offsets for quick review.
+- Case Metadata: analyst notes, case ID, and chain-of-custody hash block for the memory image.
+
+Scaling And Performance
+- Bounded Concurrency: fixed-size thread pool for non-dependent plugins; throttle based on dump size/system load.
+- Incremental Re-Runs: cache outputs; only re-run affected plugins when args or target change.
+- Smart Defaults: auto-select common plugins per OS type based on image characteristics to minimize user friction.
+
+Actionable Next Steps
+- Implement MITRE mapping in the risk analyzer and render in summaries and PDF.
+- Add process-tree highlighting driven by risk flags (hidden, injected, suspicious parent/child).

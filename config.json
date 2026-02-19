@@ -1,0 +1,6 @@
+{
+    "eula_accepted": false,
+    "virustotal_api_key": "",
+    "yara_rules_path": "resources/rules",
+    "theme": "light"
+}

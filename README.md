@@ -5,7 +5,7 @@
 
 <!-- Animated Typing SVG -->
 <a href="https://github.com/SKYLINE217/WinVolAuto-Memory-Forensics-Suite">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=3000&pause=1000&color=7B2FBE&center=true&vCenter=true&multiline=true&repeat=true&width=750&height=80&lines=Deep-Dive+Memory+Forensics+Without+the+Command+Line;Windows+%E2%80%A2+Linux+%E2%80%A2+macOS+Memory+Analysis;AI+Risk+Scoring+%7C+MITRE+ATT%26CK+Mapping+%7C+Auto+Reports" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=22&duration=3000&pause=1000&color=7B2FBE&center=true&vCenter=true&multiline=true&repeat=true&width=750&height=120&lines=Deep-Dive+Memory+Forensics+Without+the+Command+Line;Windows+%E2%80%A2+Linux+%E2%80%A2+macOS+Memory+Analysis;AI+Risk+Scoring+%7C+MITRE+ATT%26CK+Mapping+%7C+Auto+Reports" alt="Typing SVG" />
 </a>
 
 <br/>

@@ -39,53 +39,49 @@
 
 ## 🌐 Overview
 
-<table>
-<tr>
-<td width="58%">
-
 **WinVolAuto** is a powerful, user-friendly desktop application designed to make memory forensics simple, accessible, and highly efficient. Built on top of the industry-standard **Volatility 3** framework, it provides a sleek, modern interface for analyzing memory dumps from Windows, Linux, and Mac systems — **no command line required**.
 
 Whether you are a seasoned malware analyst, a security researcher, or a student learning digital forensics, WinVolAuto handles the complexity for you, allowing you to focus on the results.
 
-**By the Numbers:**
+<div align="center">
 
 | | |
-|---|---|
+|:---:|:---|
 | 🧩 **Plugin Engine** | Dynamic — discovers every installed plugin automatically |
 | 🖥️ **OS Support** | Windows · Linux · macOS memory dumps |
 | 🤖 **AI Risk Scoring** | Per-PID probability + MITRE ATT&CK mapping |
 | 📄 **Report Formats** | JSON + PDF with safe table rendering |
 | ⚡ **Execution Model** | Non-blocking async via `QThread` |
 
-</td>
-<td width="42%">
+</div>
+
+### 🔄 End-to-End Analysis Pipeline
+
+> From raw memory dump to AI-scored forensic report — every step visualised.
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#7B2FBE', 'edgeLabelBackground':'#0D1117'}}}%%
-graph TD
-    A[🧠 Memory Dump] -->|Load| B[WinVolAuto UI]
-    B -->|Discover| C[Plugin Engine]
-    C -->|Execute| D[Volatility 3 Core]
-    D -->|JSON Stream| E[Result Parser]
-    E --> F[📊 Results Table]
-    E --> G[🌳 Process Tree]
-    E --> H[🤖 AI Risk Analyzer]
-    H -->|MITRE Map| I[📑 PDF Report]
+%%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#7B2FBE', 'edgeLabelBackground':'#0D1117', 'fontSize': '16px'}}}%%
+graph LR
+    A(["🧠 Memory Dump\n.raw · .mem · .dmp\n.vmem · .elf · .core"]) -->|"Load"| B
+    B(["🖥️ WinVolAuto UI\nDark Mode · PyQt6"]) -->|"Auto-Discover"| C
+    C(["🔌 Plugin Engine\nvol --help Parser"]) -->|"Execute"| D
+    D(["⚙️ Volatility 3 Core\nSanitized Command"]) -->|"JSON Stream"| E
+    E(["📡 Result Parser\nStructured Objects"]) --> F & G & H
+    F(["📊 Results Table\nSortable · Searchable"])
+    G(["🌳 Process Tree\nParent-Child Hierarchy"])
+    H(["🤖 AI Risk Analyzer\nPer-PID Probability"]) -->|"MITRE Map"| I
+    I(["📑 PDF + JSON Report\nFull Forensic Artefact"])
 
-    style A fill:#1a1a2e,stroke:#7B2FBE,color:#fff
-    style B fill:#1a1a2e,stroke:#00D4AA,color:#fff
-    style C fill:#1a1a2e,stroke:#4D6AF5,color:#fff
-    style D fill:#1a1a2e,stroke:#FF6B6B,color:#fff
-    style E fill:#1a1a2e,stroke:#00D4AA,color:#fff
-    style F fill:#1a1a2e,stroke:#41CD52,color:#fff
-    style G fill:#1a1a2e,stroke:#F59E0B,color:#fff
-    style H fill:#1a1a2e,stroke:#EE4C2C,color:#fff
-    style I fill:#1a1a2e,stroke:#7B2FBE,color:#fff
+    style A fill:#1a1a2e,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style B fill:#1a1a2e,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style C fill:#1a1a2e,stroke:#4D6AF5,stroke-width:2px,color:#fff
+    style D fill:#1a1a2e,stroke:#FF6B6B,stroke-width:2px,color:#fff
+    style E fill:#1a1a2e,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style F fill:#1a1a2e,stroke:#41CD52,stroke-width:2px,color:#fff
+    style G fill:#1a1a2e,stroke:#F59E0B,stroke-width:2px,color:#fff
+    style H fill:#1a1a2e,stroke:#EE4C2C,stroke-width:2px,color:#fff
+    style I fill:#1a1a2e,stroke:#7B2FBE,stroke-width:2px,color:#fff
 ```
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -143,11 +139,15 @@ graph TD
 
 ## 🎯 What Can It Do?
 
+<div align="center">
+
+> **Capability Map** — every forensic power WinVolAuto gives you, at a glance.
+
 ```mermaid
-%%{init: {'theme': 'dark'}}%%
+%%{init: {'theme': 'dark', 'mindmap': {'padding': 20}}}%%
 mindmap
-  root((WinVolAuto))
-    Malware Hunting
+  root((🛡️ WinVolAuto))
+    🦠 Malware Hunting
       Hidden Process Detection
         DKOM Attack Discovery
         pslist vs psscan Cross-Check
@@ -157,20 +157,22 @@ mindmap
       Network Forensics
         Active and Closed Connections
         C2 Traffic Tracing
-    Rootkit Detection
+    🔩 Rootkit Detection
       Kernel Hook Analysis
       Driver Integrity Verification
       Unsigned Module Detection
-    Incident Response
+    🚨 Incident Response
       Command History Recovery
       Binary Extraction from RAM
       Deleted File Recovery
       Linux Triage Automation
-    AI-Powered Analysis
+    🤖 AI-Powered Analysis
       Per-PID Risk Probability
       MITRE ATT&CK Mapping
       Adversary Capability Profiling
 ```
+
+</div>
 
 ### Real-World Use Cases
 
@@ -186,79 +188,92 @@ mindmap
 
 ## 🏗️ Architecture & Workings
 
-<div align="center">
+### 🗺️ System Workflow — 4-Phase Internal Pipeline
+
+> How WinVolAuto transforms a raw memory dump into actionable forensic intelligence — phase by phase.
 
 ```mermaid
-%%{init: {'theme': 'dark'}}%%
-flowchart LR
-    subgraph Init["🚀 Initialization"]
-        PY[Python Env]
-        VH["vol --help\nJSON Parse"]
-        GT[GUI Tree\nBuild]
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '15px', 'primaryColor': '#7B2FBE'}}}%%
+flowchart TB
+    subgraph Init["━━━━━━━━━━  🚀  PHASE 1 — INITIALIZATION  ━━━━━━━━━━"]
+        direction LR
+        PY(["🐍 Python Env\nLocated"])
+        VH(["📋 vol --help\nJSON Parsed"])
+        GT(["🌳 GUI Plugin Tree\nDynamically Built"])
+        PY --> VH --> GT
     end
 
-    subgraph Config["⚙️ Configuration"]
-        PS[Plugin Select]
-        PCW[PluginConfigWidget\nDynamic Args]
-        CB[Checkboxes and\nText Inputs]
+    subgraph Config["━━━━━━━━━━  ⚙️  PHASE 2 — CONFIGURATION  ━━━━━━━━━━"]
+        direction LR
+        PS(["🔌 Plugin\nSelected"])
+        PCW(["🧠 PluginConfigWidget\nReads Arguments"])
+        CB(["☑️ Checkboxes\n& Text Inputs"])
+        TT(["💬 Volatility\nTooltips"])
+        PS --> PCW --> CB
+        PCW --> TT
     end
 
-    subgraph Exec["⚡ Execution"]
-        VE[VolatilityEngine]
-        SC["Sanitized Command\nvol -f dump -r json plugin"]
-        OS[OS Process\nSpawn]
+    subgraph Exec["━━━━━━━━━━  ⚡  PHASE 3 — EXECUTION  ━━━━━━━━━━"]
+        direction LR
+        VE(["🔧 VolatilityEngine"])
+        SC(["🛡️ Sanitized Command\nvol -f dump -r json plugin args"])
+        OS(["💻 OS Process\nSpawned via QThread"])
+        VE --> SC --> OS
     end
 
-    subgraph Parse["📊 Result Parsing"]
-        JP[JSON Parser]
-        RV[ResultsView\nSortable Tables]
-        PT[ProcessTree\nHierarchy Viz]
-        RA[Risk Analyzer\nAI + MITRE]
-        CA[Capability\nAnalyzer]
+    subgraph Parse["━━━━━━━━━━  📊  PHASE 4 — RESULT PARSING  ━━━━━━━━━━"]
+        direction LR
+        JP(["📡 JSON Parser"])
+        RV(["📊 ResultsView\nSortable Tables"])
+        PT(["🌳 ProcessTree\nHierarchy Viz"])
+        RA(["🤖 Risk Analyzer\nAI + MITRE ATT&CK"])
+        CA(["🧭 Capability\nAnalyzer"])
+        JP --> RV & PT & RA & CA
     end
 
-    PY --> VH --> GT
-    GT --> PS --> PCW --> CB
-    CB --> VE --> SC --> OS
-    OS -->|stdout/stderr| JP
-    JP --> RV & PT & RA & CA
+    Init ==> Config ==> Exec
+    OS ==>|"stdout / stderr stream"| Parse
 
-    style PY fill:#1e293b,stroke:#4D6AF5,color:#fff
-    style VH fill:#1e293b,stroke:#00D4AA,color:#fff
-    style GT fill:#1e293b,stroke:#41CD52,color:#fff
-    style PS fill:#1e293b,stroke:#7B2FBE,color:#fff
-    style PCW fill:#1e293b,stroke:#7B2FBE,color:#fff
-    style CB fill:#1e293b,stroke:#7B2FBE,color:#fff
-    style VE fill:#1e293b,stroke:#EE4C2C,color:#fff
-    style SC fill:#1e293b,stroke:#FF6B6B,color:#fff
-    style OS fill:#1e293b,stroke:#FF6B6B,color:#fff
-    style JP fill:#1e293b,stroke:#F59E0B,color:#fff
-    style RV fill:#1e293b,stroke:#41CD52,color:#fff
-    style PT fill:#1e293b,stroke:#41CD52,color:#fff
-    style RA fill:#1e293b,stroke:#EE4C2C,color:#fff
-    style CA fill:#1e293b,stroke:#EE4C2C,color:#fff
+    style Init fill:#0d1117,stroke:#4D6AF5,stroke-width:3px,color:#fff
+    style Config fill:#0d1117,stroke:#7B2FBE,stroke-width:3px,color:#fff
+    style Exec fill:#0d1117,stroke:#EE4C2C,stroke-width:3px,color:#fff
+    style Parse fill:#0d1117,stroke:#41CD52,stroke-width:3px,color:#fff
+
+    style PY fill:#1e293b,stroke:#4D6AF5,stroke-width:2px,color:#fff
+    style VH fill:#1e293b,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style GT fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style PS fill:#1e293b,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style PCW fill:#1e293b,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style CB fill:#1e293b,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style TT fill:#1e293b,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style VE fill:#1e293b,stroke:#EE4C2C,stroke-width:2px,color:#fff
+    style SC fill:#1e293b,stroke:#FF6B6B,stroke-width:2px,color:#fff
+    style OS fill:#1e293b,stroke:#FF6B6B,stroke-width:2px,color:#fff
+    style JP fill:#1e293b,stroke:#F59E0B,stroke-width:2px,color:#fff
+    style RV fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style PT fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style RA fill:#1e293b,stroke:#EE4C2C,stroke-width:2px,color:#fff
+    style CA fill:#1e293b,stroke:#EE4C2C,stroke-width:2px,color:#fff
 ```
 
-</div>
-
-### The 4-Phase Pipeline
+### The 4-Phase Pipeline — Summary
 
 <table>
 <tr>
-<td width="25%" align="center"><strong>Phase 1</strong><br/>🚀 Init</td>
-<td width="75%">App launches, locates Python env, executes <code>vol.exe --help</code> in a hidden process, parses all plugin JSON descriptors, and dynamically builds the GUI tree.</td>
+<td width="20%" align="center">🚀<br/><strong>Phase 1</strong><br/>Init</td>
+<td width="80%">App launches, locates Python env, executes <code>vol.exe --help</code> in a hidden process, parses all plugin JSON descriptors, and dynamically builds the full GUI tree.</td>
 </tr>
 <tr>
-<td align="center"><strong>Phase 2</strong><br/>⚙️ Config</td>
+<td align="center">⚙️<br/><strong>Phase 2</strong><br/>Config</td>
 <td>When you select a plugin (e.g., <code>windows.pslist</code>), <strong>PluginConfigWidget</strong> reads its required arguments and dynamically generates checkboxes for boolean flags and text fields for string arguments — with hover tooltips from Volatility's own help text.</td>
 </tr>
 <tr>
-<td align="center"><strong>Phase 3</strong><br/>⚡ Execute</td>
+<td align="center">⚡<br/><strong>Phase 3</strong><br/>Execute</td>
 <td><strong>VolatilityEngine</strong> constructs a sanitized, safe command: <code>vol.exe -f &lt;dump&gt; -r json &lt;plugin&gt; &lt;args&gt;</code>, spawns it as a separate OS process, and captures stdout/stderr in real-time streams. The UI stays fully responsive via <code>QThread</code>.</td>
 </tr>
 <tr>
-<td align="center"><strong>Phase 4</strong><br/>📊 Parse</td>
-<td>Raw JSON → <strong>ResultsView</strong> (sortable tables) + <strong>ProcessTree</strong> (parent-child hierarchy) + <strong>Risk Analyzer</strong> (AI probabilities, MITRE mapping) + <strong>Capability Analyzer</strong> (persistence · injection · evasion · C2 · exfiltration).</td>
+<td align="center">📊<br/><strong>Phase 4</strong><br/>Parse</td>
+<td>Raw JSON → <strong>ResultsView</strong> (sortable tables) + <strong>ProcessTree</strong> (parent-child hierarchy) + <strong>Risk Analyzer</strong> (AI probabilities, MITRE ATT&CK mapping) + <strong>Capability Analyzer</strong> (persistence · injection · evasion · C2 · exfiltration).</td>
 </tr>
 </table>
 
@@ -298,45 +313,71 @@ python main.py
 
 ## 📊 The Dashboard: A Detailed Tour
 
-<div align="center">
+### 🖼️ UI Zone Layout — Visual Map
+
+> Every panel in the WinVolAuto interface and how it connects to your investigation workflow.
 
 ```mermaid
-%%{init: {'theme': 'dark'}}%%
-graph TB
-    subgraph Header["🖥️ Header Bar"]
-        HB["WinVolAuto Professional — Status and Actions"]
-    end
-    subgraph Top["📂 File Selection Zone"]
-        FI["File Path Input — .raw · .mem · .dmp · .vmem · .elf · .core"]
-        BR["Browse Button — Smart Filter + Auto OS Detection"]
-    end
-    subgraph Left["🌳 Plugin Navigator"]
-        TV["Tree View — windows · linux · mac · banners · WinVolAuto"]
-        SF["Real-Time Search Filter"]
-    end
-    subgraph Right["⚙️ Config Panel"]
-        FC["Flag Checkboxes"]
-        AI_["Argument Inputs"]
-        GL["Global Toggles — VirusTotal and AI Risk Probability"]
-    end
-    subgraph Bottom["💻 Live Console Output"]
-        LC["Scrolling Terminal — Raw command + real-time stderr/stdout"]
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '15px'}}}%%
+flowchart TB
+    subgraph APP["━━━━━━━━━━━━  🖥️  WINVOLAUTO PROFESSIONAL  ━━━━━━━━━━━━"]
+        direction TB
+
+        subgraph HDR["🔝 HEADER BAR"]
+            HB(["WinVolAuto Professional\nReal-time Status · Error Messages"])
+        end
+
+        subgraph FILE["📂 FILE SELECTION ZONE"]
+            direction LR
+            FI(["📁 File Path Input\n.raw · .mem · .dmp · .vmem · .elf · .core"])
+            BR(["🔍 Browse Button\nSmart Filter + Auto OS Detection"])
+            FI --- BR
+        end
+
+        subgraph MID["CENTER WORKSPACE"]
+            direction LR
+
+            subgraph LEFT["🌳 PLUGIN NAVIGATOR"]
+                direction TB
+                TV(["📂 Tree View\nwindows · linux · mac\nbanners · WinVolAuto"])
+                SF(["⚡ Real-Time Search Filter\ntype to instantly filter plugins"])
+                TV --> SF
+            end
+
+            subgraph RIGHT["⚙️ CONFIG PANEL"]
+                direction TB
+                FC(["☑️ Flag Checkboxes\n--verbose · --physical"])
+                AI_(["✏️ Argument Inputs\n--pid · --address · --name"])
+                GL(["🔀 Global Toggles\nVirusTotal · AI Risk Probability"])
+                FC --> AI_ --> GL
+            end
+        end
+
+        subgraph CON["💻 LIVE CONSOLE OUTPUT"]
+            LC(["📟 Scrolling Terminal\nExact command shown · real-time stdout/stderr\nCritical for debugging Volatility errors"])
+        end
+
+        HDR ==> FILE ==> MID ==> CON
     end
 
-    Header --> Top
-    Top --> Left
-    Top --> Right
-    Left --> Bottom
-    Right --> Bottom
+    style APP fill:#070d15,stroke:#7B2FBE,stroke-width:3px,color:#fff
+    style HDR fill:#0d1117,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style FILE fill:#0d1117,stroke:#4D6AF5,stroke-width:2px,color:#fff
+    style MID fill:#070d15,stroke:#334155,stroke-width:1px,color:#fff
+    style LEFT fill:#0d1117,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style RIGHT fill:#0d1117,stroke:#41CD52,stroke-width:2px,color:#fff
+    style CON fill:#0d1117,stroke:#FF6B6B,stroke-width:2px,color:#fff
 
-    style Header fill:#1e293b,stroke:#7B2FBE,color:#fff
-    style Top fill:#1e293b,stroke:#4D6AF5,color:#fff
-    style Left fill:#1e293b,stroke:#00D4AA,color:#fff
-    style Right fill:#1e293b,stroke:#41CD52,color:#fff
-    style Bottom fill:#1e293b,stroke:#FF6B6B,color:#fff
+    style HB fill:#1e293b,stroke:#7B2FBE,stroke-width:2px,color:#fff
+    style FI fill:#1e293b,stroke:#4D6AF5,stroke-width:2px,color:#fff
+    style BR fill:#1e293b,stroke:#4D6AF5,stroke-width:2px,color:#fff
+    style TV fill:#1e293b,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style SF fill:#1e293b,stroke:#00D4AA,stroke-width:2px,color:#fff
+    style FC fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style AI_ fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style GL fill:#1e293b,stroke:#41CD52,stroke-width:2px,color:#fff
+    style LC fill:#1e293b,stroke:#FF6B6B,stroke-width:2px,color:#fff
 ```
-
-</div>
 
 | Zone | What It Does |
 |:---:|:---|
